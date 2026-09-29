@@ -1,0 +1,908 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* 80% do valor original (16px) — ver comentário completo em `html { font-size }` abaixo e em
+     `index.html` sobre por que isso substitui as tentativas anteriores de `zoom`/`transform`. */
+  --font-size: 12.8px;
+  --background: #ffffff;
+  --foreground: oklch(0.145 0 0);
+  --card: #ffffff;
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: #030213;
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.95 0.0058 264.53);
+  --secondary-foreground: #030213;
+  --muted: #ececf0;
+  --muted-foreground: #717182;
+  --accent: #e9ebef;
+  --accent-foreground: #030213;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(0, 0, 0, 0.1);
+  --input: transparent;
+  --input-background: #f3f3f5;
+  --switch-background: #cbced4;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: #030213;
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /**
+  * Default typography styles for HTML elements (h1-h4, p, label, button, input).
+  * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.
+  */
+
+  html {
+    font-size: var(--font-size);
+    /* "Encolher a tela pra 80%" (pedido do usuário, 2026-08-28/31) — 3ª tentativa, esta
+       definitiva. `zoom: 0.8` e depois `transform: scale(0.8)` (ver histórico em `index.html`)
+       foram revertidos: ambos aplicam uma transformação VISUAL por cima do layout já calculado,
+       então o Floating UI (Radix Select/Popover/DropdownMenu/Tooltip) calcula a posição do
+       popover a partir de `getBoundingClientRect()` do trigger, mas o popover em si (portado pra
+       `body`, `position: fixed`) não herda a mesma transformação/espaço de coordenadas —
+       resultado: todo dropdown nascia deslocado.
+       Esta abordagem não tem esse problema porque não é uma transformação por cima do layout —
+       é o layout REAL que fica menor. `rem` em toda a base (Tailwind já é rem-based por padrão;
+       componentes com `px` hardcoded foram convertidos, ver auditoria de 2026-08-31) responde a
+       ESTA variável, então tudo — inclusive os próprios popovers — encolhe junto, na mesma malha
+       de coordenadas. `getBoundingClientRect()` já reflete o tamanho real menor: não há drift. */
+  }
+
+  h1 {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h2 {
+    font-size: var(--text-xl);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h4 {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  label {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  button {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  input {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-normal);
+    line-height: 1.5;
+  }
+}
+
+/* ============================================================================
+   VLI Manobra X — tema alternável (dark / light)
+   ----------------------------------------------------------------------------
+   Tokens específicos do protótipo Manobra X (independentes dos tokens shadcn
+   acima, que não são consumidos pelas telas reais do app). Aplicado via o
+   atributo `data-theme` na tag <html> (ver ThemeContext.tsx).
+
+   Os dois temas derivam da mesma base de marca (azul #3A7EC6 / laranja),
+   só variando lightness/saturação para contraste — não são paletas
+   independentes. "light" é o tema harmonizado com as cores da marca (azul
+   #0E74BA e laranja #EF7A1D, extraídas do próprio arquivo Logo_VLI.svg).
+   ============================================================================ */
+:root,
+[data-theme='dark'] {
+  /* Sem isso, o Chrome pinta os controles nativos do navegador (ícone/popup de
+     `input[type="date"]`, checkbox nativo, scrollbar) com o esquema padrão do próprio SO —
+     em telas escuras sobrava um ícone de calendário preto sobre fundo escuro (`--vli-panel-bg`),
+     quase invisível. Isso amarra o chrome nativo ao tema que o app já controla via `data-theme`
+     (`ThemeContext.tsx`), independente do tema do SO. */
+  color-scheme: dark;
+
+  /* Hierarquia de fundo: menu lateral mais claro < página de conteúdo mais escura < card (--vli-panel-bg).
+     Diferença sutil de propósito — só o suficiente para separar as áreas sem criar dois blocos.
+     Navy derivado do próprio azul de marca (--vli-primary, matiz ~211°) escurecido, em vez de um
+     cinza-chumbo neutro — para que o dark mode carregue a mesma identidade do light mode. */
+  --vli-sidebar-bg: #0E141B;
+  --vli-sidebar-shadow: none;
+  --vli-bg-deep: #0C1218;
+  --vli-panel-bg: #18212A;
+  --vli-surface: #212B36;
+  --vli-border: #313D49;
+  /* Fundo do cabeçalho dos dois painéis principais ("Planos de Manobra"/"Visão Topológica
+     Atual", `CabecalhoPainel`/`PainelCard` em `PlanejamentoScreen.tsx`) — 2026-08-28, pedido
+     explícito do usuário: "o header precisa ser branco no light mode... e no dark pode ser
+     proporcional... precisa ser do mesmo tom, não pode ser uma cor diferente". No dark,
+     `--vli-surface` já É um tom proporcionalmente mais claro da MESMA família de cinza-azulado de
+     `--vli-panel-bg` (não uma cor à parte) — serve direto. No light (ver bloco claro abaixo),
+     `--vli-surface` puro (#F0F3F8) tem um matiz azulado perceptível o bastante pra ler como "uma
+     cor diferente" contra o branco puro do corpo do card — por isso o light usa `--vli-panel-bg`
+     (branco) direto, não `--vli-surface`. */
+  --vli-panel-header-bg: var(--vli-surface);
+
+  /* Fundo do canvas do mapa topológico (área de zoom/pan, ver `ZoomableMapa` em
+     `PlanejamentoScreen.tsx`) — token PRÓPRIO, não `--vli-bg-deep` direto, porque o dot grid
+     sobre ele precisa de contraste calibrado à parte: `--vli-bg-deep` (quase preto) deixava os
+     pontos (`--vli-border`) contrastando demais no dark mode. Um pouco mais claro que
+     `--vli-bg-deep`, mais escuro que `--vli-panel-bg`. No light mode, `--vli-bg-deep` já ficou
+     bom (cinza claro) — token aqui só repete o mesmo valor. */
+  --vli-map-canvas-bg: #141B24;
+
+  /* Scrollbar customizada: mais clara no dark, translúcida sobre qualquer fundo. */
+  --vli-scrollbar-thumb: rgba(255, 255, 255, 0.16);
+  --vli-scrollbar-thumb-hover: rgba(255, 255, 255, 0.28);
+
+  --vli-text-hi: #F1F5F9;
+  --vli-text-md: #CBD5E1;
+  --vli-text-lo: #64748B;
+
+  /* Badge "Editável" das abas da Ficha Operacional (2026-09-28) — leve destaque no azul de marca
+     #0E74BA (Logo_VLI.svg). No escuro o texto é clareado pra manter contraste; o azul de marca
+     fica na borda/fundo. O estado somente leitura não tem badge (removido a pedido do usuário). */
+  --vli-badge-editavel-fg: #5FAEE3;
+  --vli-badge-editavel-bg: color-mix(in srgb, #0E74BA 16%, var(--vli-panel-bg));
+  --vli-badge-editavel-border: color-mix(in srgb, #0E74BA 55%, transparent);
+  /* Cores de marca da Ficha Operacional (Logo_VLI.svg) — idênticas nos dois temas: azul = seleção,
+     destaque, itens prontos e editáveis; laranja = locomotivas. Texto azul usa --vli-badge-editavel-fg
+     (clareado no escuro); estas duas são pra superfície (bloco, ponto, borda). */
+  --vli-marca-azul: #0E74BA;
+  --vli-marca-laranja: #EF7A1D;
+  /* Tooltips do Manobra X — fundo preto e texto branco nos dois temas (2026-09-28, pedido explícito
+     do usuário: "todo tooltip do manobra x, faça com fundo preto e texto branco"). Borda clarinha só
+     pro balão não sumir sobre o fundo escuro; texto secundário e o vermelho de "a retirar"
+     clareados pra continuarem legíveis sobre o preto. */
+  --vli-tooltip-bg: #000000;
+  --vli-tooltip-fg: #FFFFFF;
+  --vli-tooltip-fg-secundario: rgba(255, 255, 255, 0.78);
+  --vli-tooltip-borda: rgba(255, 255, 255, 0.14);
+  --vli-tooltip-perigo: #FF8A8A;
+
+  /* Laranja da marca: reservado só para a ação primária de cada tela (ex.: "Confirmar Plano"). */
+  --vli-accent: #F37A19;
+  --vli-accent-hover: #D86A10;
+  /* Azul: cor secundária de interação — estados selecionados, foco, bordas de destaque, links.
+     Nunca mais igual ao laranja: os dois precisam conviver na mesma tela sem competir.
+     --vli-primary continua o azul "médio" usado como PREENCHIMENTO SÓLIDO (botões com texto
+     branco em cima, ex.: "Confirmar Plano") — não pode clarear, senão o branco perde contraste.
+     --vli-primary-text é o mesmo azul só que mais claro, para quando ele aparece como TEXTO/
+     ÍCONE/BORDA direto sobre fundo escuro (chips ativos, links, destaques) — o tom médio original
+     ficava "sujo"/difícil de ler nesse uso. */
+  --vli-primary: #3A7EC6;
+  --vli-primary-hover: #2E6BAF;
+  --vli-primary-text: #66C2FF;
+  /* Fundo de item/estado ativo (nav lateral, chips, linhas selecionadas): sempre o azul de marca
+     em baixa opacidade, nunca hardcoded — assim acompanha o mesmo tom em qualquer tela/tema. */
+  --vli-active-bg: rgba(58, 126, 198, 0.16);
+
+  --vli-success: #22C55E;
+  --vli-success-strong: #166534;
+  --vli-success-text: #22C55E;
+  --vli-success-bg: rgba(34, 197, 94, 0.08);
+  /* Verde de INCLUSÃO da Ficha Operacional (aba Trem, painel Ações operacionais) — 2026-09-29,
+     pedido explícito do usuário: "#16A34A, fundo de destaque com opacidade de 8%". Token próprio
+     (não reaproveita --vli-success, que é o "sucesso" genérico do app — Confirmar Ficha, checks
+     etc. — com outro tom/opacidade e usado bem mais largamente); fg clareado aqui pra contraste
+     no painel escuro, `bg` idêntico nos dois temas (mesma lógica de --vli-danger-bg abaixo). */
+  --vli-incluir-fg: #4ADE80;
+  --vli-incluir-bg: rgba(22, 163, 74, 0.08);
+  /* Texto terciário (posição, série) — mais apagado que --vli-text-lo; mesmo valor nos dois temas. */
+  --vli-text-sutil: #94A3B8;
+  /* Hover das linhas verdes (`FichaOperacaoScreen.tsx`, aba "Vagões a Incluir") — faltava este
+     token (só existia `-danger-bg-strong`/`-warning-bg-strong`); sem ele, `var(--vli-success-
+     bg-strong)` resolvia pra `background-color` inválido → `transparent`, deixando o hover
+     "branco no light, preto no dark" (o fundo por trás vazando) em vez de um verde mais forte.
+     Mesmo delta de opacidade usado pelo `-danger-bg-strong` deste tema (+0.04). */
+  --vli-success-bg-strong: rgba(34, 197, 94, 0.12);
+  --vli-success-border: #22543D;
+  --vli-toast-success-bg: #0A2010;
+  --vli-toast-success-text: #68D391;
+
+  --vli-danger: #DC2626;
+  --vli-danger-strong: #B91C1C;
+  --vli-danger-strong-hover: #991B1B;
+  /* Um tom mais escuro que `--vli-danger-strong-hover` (o mais escuro que já existia) — usado só
+     como BORDA do quadradinho de vagão a retirar no mapa (`Composition.tsx`), 2026-08-27, pedido
+     explícito do usuário: "deixe um pouco mais escuro só". */
+  --vli-danger-deep: #7A1717;
+  --vli-danger-text: #FC8181;
+  --vli-danger-bg: rgba(220, 38, 38, 0.08);
+  --vli-danger-bg-strong: rgba(220, 38, 38, 0.12);
+  /* Mesmo tom de --vli-danger-bg/-strong, mas SÓLIDO (color-mix nunca tem alpha no resultado) —
+     linha "a retirar" da Composição (2026-09-29, pedido explícito do usuário): células sticky
+     (Pos./Veículo) precisam de fundo opaco próprio pra cobrir o conteúdo por trás durante a
+     rolagem; se esse fundo fosse o --vli-danger-bg translúcido, ele se somaria ao vermelho
+     translúcido da linha e ficaria mais escuro só nessas células. Aplicado igual em toda célula
+     da linha via CSS (`.vli-linha-composicao`, mais abaixo) — nenhuma célula tem tom diferente.
+     `--vli-panel-bg` já é branco no light e o painel escuro no dark, então isto casa com os dois
+     temas sem precisar redefinir por tema (mesma lógica de --vli-danger-bg acima, que também usa
+     o mesmo valor nos dois). */
+  --vli-linha-retirar-bg: color-mix(in srgb, #DC2626 8%, var(--vli-panel-bg));
+  --vli-linha-retirar-bg-hover: color-mix(in srgb, #DC2626 12%, var(--vli-panel-bg));
+
+  /* Fundo dos chips "vagão a retirar"/"vagão a incluir" (`TagVagao`, `PlanManobraX.tsx`) — 2026-08-27,
+     pedido explícito do usuário, com hex exatos (não `-danger-bg`/`-success-bg` genéricos: são
+     tons próprios, dedicados a esse chip específico, não o véu de aviso reaproveitável em
+     qualquer lugar). Borda/texto continuam nos tokens de sempre (`--vli-danger-text`/
+     `--vli-success-text`) — pedido explícito: "a border pode manter o mesmo tom". */
+  --vli-wagon-retirado-bg: #302B35;
+  --vli-wagon-incluido-bg: #213739;
+  /* Fundo dos chips "locomotiva"/"vagão" (MESMO `TagVagao` acima) — 2026-08-27, pedido explícito
+     do usuário: "preciso que a locomotiva seja representada pelo laranja, os vagões por azul...
+     só pra fazer uma relação melhor com o mapa" — MESMA técnica de tom escuro/dessaturado dos
+     dois de cima, agora na família laranja (locomotiva) e azul (vagão), pareando com as cores que
+     os quadradinhos já usam no mapa (`--vli-map-trem-locomotiva-*`/`--vli-map-segment-vagao-*`,
+     `Composition.tsx`). */
+  --vli-wagon-locomotiva-bg: #332920;
+  --vli-wagon-vagao-bg: #202B3A;
+  /* Borda/texto desses MESMOS chips — 2026-08-28, pedido explícito do usuário: "as locomotivas e
+     vagões estão meio apagados... deixe a cor um pouco mais evidente, tanto da borda quanto do
+     texto". No dark, o token de BORDA do quadradinho do mapa (`--vli-map-trem-locomotiva-border`
+     #734223 / `--vli-map-segment-vagao-border` #3D5A80) é ele próprio escuro/dessaturado — foi
+     desenhado pra contornar o PREENCHIMENTO claro do quadradinho, não pra servir de texto sobre o
+     fundo escuro do chip, por isso lia apagado. Troca pro tom de PREENCHIMENTO desses mesmos
+     elementos do mapa (`--vli-map-trem-locomotiva-bg` / `--vli-map-segment-vagao`) — bem mais
+     vívido, e ainda a MESMA cor que o mapa já usa pra locomotiva/vagão, só a variante clara em vez
+     da de contorno. */
+  --vli-wagon-locomotiva-fg: var(--vli-map-trem-locomotiva-bg);
+  --vli-wagon-vagao-fg: var(--vli-map-segment-vagao);
+
+  --vli-warning: #F59E0B;
+  --vli-warning-text: #F59E0B;
+  --vli-warning-bg: rgba(245, 158, 11, 0.08);
+  --vli-warning-bg-strong: rgba(245, 158, 11, 0.14);
+
+  --vli-track-free-fill: #1E2D4A;
+  --vli-track-free-border: #3D5A80;
+  --vli-track-blocked-fill: #2A1515;
+  --vli-track-blocked-border: #7B2020;
+  --vli-track-train-fill: #0D2847;
+
+  /* Paleta de domínio do motor de mapa topológico novo (train-yard/styles.ts,
+     render/Marker.tsx) — o que cada cor REPRESENTA (tipo de linha, marcador) não muda com o
+     tema, só a luminosidade, pro contraste continuar OK em fundo claro ou escuro. Mesmo
+     princípio dos --vli-track-* acima, só que cobrindo o vocabulário maior do motor novo
+     (mais tipos de linha, mais variantes de marcador). Valores dark = os hex originais que já
+     estavam hardcoded nos componentes (protótipo isolado, nunca teve light mode) — cor idêntica,
+     só voltou a ser um token. */
+  --vli-map-navy-fill: #1E2D4A;
+  --vli-map-navy-border: #3D5A80;
+  --vli-map-navy-label: #F1F5F9;
+  --vli-map-blue-fill: #0D2035;
+  --vli-map-blue-border: #4A90D9;
+  --vli-map-blue-label: #63B3ED;
+  --vli-map-gold-fill: #332A05;
+  --vli-map-gold-border: #D4AF37;
+  --vli-map-yellow-strong: #F6E05E;
+  /* Amarelo SÓLIDO, mesmo tom nos dois temas — 2026-09-23, pedido explícito do usuário, com
+     imagem de referência: "o marco, no light mode, precisa ser mais amarelo mesmo... não tanto
+     marrom". Diferente de `--vli-map-yellow-strong` (que MUDA pra um marrom/âmbar escuro no
+     light, de propósito — é usado como cor de TEXTO/borda nos badges "SB"/"LM", `Marker.tsx`,
+     onde um amarelo puro não teria contraste legível sobre fundo claro): a bolinha do marco
+     (`MarcoJ105Marker`, `ComposicaoJ105Layer.tsx`) é um preenchimento sólido, não texto — não
+     precisa (nem deve) escurecer no light, só precisa continuar lendo como "amarelo" nos dois
+     temas, como um marcador físico de parada faria na vida real. */
+  --vli-map-yellow-dot: #F6E05E;
+  --vli-map-teal-fill: #0A1E28;
+  --vli-map-teal-border: #0C4860;
+  --vli-map-teal-label: #8FC1D6;
+  --vli-map-turquoise-fill: #0A2A28;
+  --vli-map-turquoise-border: #2DD4BF;
+  --vli-map-turquoise-label: #5EEAD4;
+  --vli-map-green-fill: #0D2A1A;
+  --vli-map-green-border: #3D9970;
+  --vli-map-green-label: #6EE7B7;
+  --vli-map-slate-border: #2A3A52;
+  --vli-map-slate-label: #94A3B8;
+  /* Cinza-azulado neutro — MESMA família de `--vli-border` (2026-08-26: "cinza-azulado neutro,
+     tipo o mesmo usado em bordas/elementos secundários já estabelecidos no design system").
+     Revisão do cinza puro (R=G=B) usado antes (2026-08-25): aquele valor, embora neutro no
+     código, estava lendo como amarronzado/bege na tela. Ajustado de novo logo em seguida
+     (2026-08-26, "precisa ser um pouco mais claro... ficou mt apagado"): um pouco mais claro que
+     `--vli-border` puro, pra manter contraste legível contra `--vli-map-canvas-bg`. Usado por
+     `controle-patio`/`controle-cco` (`styles.ts`) e pelo traço padrão de conexão/AMV
+     (`Connections.tsx`). */
+  --vli-map-gray-fill: #212B36;
+  --vli-map-gray-border: #46596E;
+  --vli-map-gray-label: #B8B8B8;
+  --vli-map-default-label: #CBD5E1;
+  --vli-map-composition-fill: var(--vli-surface);
+  --vli-map-composition-accent: var(--vli-map-neutral-light);
+  --vli-map-divider-fill: #2A2A2A;
+  --vli-map-divider-border: #9CA3AF;
+  --vli-map-red-fill: #2A1515;
+  --vli-map-red-border: #7B2020;
+  --vli-map-red-strong: #EF4444;
+  --vli-map-red-label: #FC8181;
+  --vli-map-brown-fill: #2A1D18;
+  --vli-map-brown-border: #8B5A4A;
+  --vli-map-brown-label: #C9A99A;
+  --vli-map-amber-fill: #2A2000;
+  --vli-map-neutral-light: #CBD5E1;
+  --vli-map-segment-locomotiva: #0D2847;
+  /* Cor de marca (logo) — 2026-09-23, pedido explícito do usuário: "mude a cor dos vagões de
+     trem para 0E74BA... que são as cores do logo" — mesmo tom em dark e light (cor de marca, não
+     adaptada ao tema). Ajuste fino em seguida, mesma conversa ("a cor dos trens ficaram muito
+     fortes... pode deixar um pouco mais clarinho. mas mantendo o tom que te enviei como
+     referência"): o preenchimento passou a ser essa mesma cor CLAREADA (~35% em direção ao
+     branco, mesmo matiz) — a cor de marca em si (#0E74BA) virou a BORDA, não mais um tom
+     dessaturado à parte, garantindo que o "tom de referência" continue exatamente presente no
+     bloco, só não dominando a área toda. */
+  --vli-map-segment-vagao: #62A5D2;
+  --vli-map-segment-vagao-border: #0E74BA;
+  --vli-map-segment-vagao-text: #FFFFFF;
+  --vli-map-segment-default: #334155;
+
+  /* "visão topológica / trens / locomotiva" — bloco segmentado de locomotiva(s) agrupadas
+     dentro da composição, sobre a linha (ver `Composition.tsx`). Único tom "quente" do motor de
+     mapa — todo o resto é frio (azul/teal/verde) — de propósito: destaca a locomotiva como a
+     "cabeça" do trem à primeira vista. Cor de marca (logo) — 2026-09-23, pedido explícito do
+     usuário: "as locomotivas para EF7A1D... que são as cores do logo", clareada em seguida no
+     mesmo pedido de ajuste do vagão acima — MESMA lógica: preenchimento clareado (~35% em
+     direção ao branco), borda na cor de marca exata (#EF7A1D). */
+  --vli-map-trem-locomotiva-bg: #F5A96C;
+  --vli-map-trem-locomotiva-border: #EF7A1D;
+  --vli-map-trem-locomotiva-text: #FFFFFF;
+
+  /* "visão topológica / amv" — pontos de desvio/junção (círculos numerados, ex.: "66";
+     variantes `amv-manual`/`amv-mola` em `Marker.tsx`). bg/text coincidem em valor com
+     `--vli-map-navy-fill`/`--vli-map-blue-label` (mesma família azul), mas são tokens PRÓPRIOS —
+     a borda do AMV é mais sutil que a borda "navy" usada pela linha "carga", então não pode
+     compartilhar a mesma variável. */
+  --vli-map-amv-bg: #1E2D4A;
+  --vli-map-amv-border: #2E435E;
+  --vli-map-amv-text: #63B3ED;
+
+  /* "visão topológica / linhas" — bg1/border1 e bg2/border2, hoje usados pelos tipos de linha
+     "controle-patio"/"controle-cco" (ver `LINE_TYPE_STYLES` em `styles.ts`) — mesmos valores de
+     `--vli-map-teal-*`/`--vli-map-turquoise-*` (idênticos no dark; o light foi corrigido pra
+     bater com o token oficial, ver bloco light abaixo), reexpostos com o nome do domínio "linhas". */
+  --vli-map-linha-bg1: #0A1E28;
+  --vli-map-linha-border1: #0C4860;
+  --vli-map-linha-bg2: #0A2A28;
+  --vli-map-linha-border2: #2DD4BF;
+
+  /* Cinza frio (`--vli-surface`, MESMA superfície já usada por passo aberto/legenda) em vez do
+     tint translúcido antigo — 2026-09-25, pedido explícito do usuário: virou padrão global do
+     app (menu lateral + todas as telas), não mais um override isolado por trem (era redefinido
+     só na tela de Planejamento com o J105 V2 selecionado; validado lá primeiro, ver histórico
+     de `PlanejamentoScreen.tsx`). O tint antigo (preto translúcido) puxava pro amarelado sobre
+     as superfícies claras deste tema. */
+  --vli-hover-tint: var(--vli-surface);
+
+  --vli-shadow: none;
+}
+
+[data-theme='light'] {
+  /* Ver comentário equivalente no bloco dark acima — mesmo motivo, sentido oposto. */
+  color-scheme: light;
+
+  /* Hierarquia de fundo: menu lateral branco < página de conteúdo cinza-azulada < card (branco puro).
+     Diferença sutil de propósito — só o suficiente para separar as áreas sem criar dois blocos. */
+  --vli-sidebar-bg: #FFFFFF;
+  --vli-sidebar-shadow: none;
+  --vli-bg-deep: #F7F8FA;
+  --vli-panel-bg: #FFFFFF;
+  --vli-surface: #F0F3F8;
+  --vli-border: #D9E1EC;
+  /* Ver comentário no bloco escuro — MESMO cabeçalho, tom próprio pro claro: branco puro (igual a
+     `--vli-panel-bg`), não `--vli-surface` (esse tem um matiz azulado que lê como cor à parte
+     contra o branco do corpo do card no light, diferente do dark, onde `--vli-surface` já é só um
+     tom proporcionalmente mais claro da mesma família neutra). */
+  --vli-panel-header-bg: var(--vli-panel-bg);
+
+  /* Fundo do canvas do mapa — igual a --vli-bg-deep aqui (já ficou bom no light mode); só o
+     dark mode precisa de um valor próprio, ver comentário no bloco dark acima. */
+  --vli-map-canvas-bg: #F7F8FA;
+
+  /* Scrollbar customizada: mais escura no light, translúcida sobre qualquer fundo. */
+  --vli-scrollbar-thumb: rgba(16, 24, 40, 0.18);
+  --vli-scrollbar-thumb-hover: rgba(16, 24, 40, 0.32);
+
+  --vli-text-hi: #101826;
+  --vli-text-md: #465364;
+  --vli-text-lo: #6E7A8A;
+
+  /* Ver bloco escuro — badge "Editável" das abas da Ficha Operacional. */
+  --vli-badge-editavel-fg: #0E74BA;
+  --vli-badge-editavel-bg: color-mix(in srgb, #0E74BA 8%, var(--vli-panel-bg));
+  --vli-badge-editavel-border: color-mix(in srgb, #0E74BA 40%, transparent);
+
+  /* Laranja exato da marca (Logo_VLI.svg), levemente ajustado para contraste em fundo claro. */
+  --vli-accent: #EF7A1D;
+  --vli-accent-hover: #D9660E;
+  /* Azul exato da marca (Logo_VLI.svg) como cor primária do tema claro — cor secundária de
+     interação (selecionado/foco/destaque), o laranja acima fica só para a ação primária. */
+  --vli-primary: #0E74BA;
+  --vli-primary-hover: #0B5C94;
+  --vli-primary-text: #0E74BA;
+  --vli-active-bg: rgba(14, 116, 186, 0.08);
+
+  --vli-success: #16A34A;
+  --vli-success-strong: #15803D;
+  --vli-success-text: #15803D;
+  --vli-success-bg: rgba(22, 163, 74, 0.1);
+  /* Ver bloco escuro — verde de inclusão da Ficha Operacional. */
+  --vli-incluir-fg: #15803D;
+  --vli-incluir-bg: rgba(22, 163, 74, 0.08);
+  /* Ver comentário equivalente no bloco escuro — mesmo motivo (token que faltava). */
+  --vli-success-bg-strong: rgba(22, 163, 74, 0.14);
+  --vli-success-border: #86EFAC;
+  --vli-toast-success-bg: #ECFDF3;
+  --vli-toast-success-text: #15803D;
+
+  --vli-danger: #DC2626;
+  --vli-danger-strong: #DC2626;
+  --vli-danger-strong-hover: #B91C1C;
+  /* Ver comentário no bloco escuro — mesma borda mais escura pro quadradinho de vagão a retirar. */
+  --vli-danger-deep: #7A1717;
+  --vli-danger-text: #B91C1C;
+  --vli-danger-bg: rgba(220, 38, 38, 0.08);
+  --vli-danger-bg-strong: rgba(220, 38, 38, 0.12);
+
+  /* Ver comentário no bloco escuro — MESMOS chips, tons próprios pro claro. */
+  --vli-wagon-retirado-bg: #EEE3E8;
+  --vli-wagon-incluido-bg: #DAEBE6;
+  --vli-wagon-locomotiva-bg: #F1E4D6;
+  --vli-wagon-vagao-bg: #DCE6F0;
+  /* Borda/texto — 2026-08-28: no claro o token de BORDA do quadradinho já tinha contraste bom
+     contra o fundo claro do chip (diferente do dark, onde precisou trocar pro preenchimento), por
+     isso continua reaproveitando o mesmo tom de sempre. */
+  --vli-wagon-locomotiva-fg: var(--vli-map-trem-locomotiva-border);
+  --vli-wagon-vagao-fg: var(--vli-map-segment-vagao-border);
+
+  --vli-warning: #B45309;
+  --vli-warning-text: #B45309;
+  --vli-warning-bg: rgba(180, 83, 9, 0.08);
+  --vli-warning-bg-strong: rgba(180, 83, 9, 0.14);
+
+  --vli-track-free-fill: #E7ECF5;
+  --vli-track-free-border: #7C93B4;
+  --vli-track-blocked-fill: #FBE7E7;
+  --vli-track-blocked-border: #C23B3B;
+  --vli-track-train-fill: #DCE7F5;
+
+  /* Contrapartida light dos --vli-map-* acima — mesma família de cor (mesmo "papel" no
+     domínio), só invertendo qual ponta da escala de luminosidade fica o preenchimento vs. o
+     traço/texto: no dark, fill é bem escuro e traço/texto claro; no light, fill vira um tom
+     bem claro (pastel) da mesma cor e traço/texto escurece o bastante pra ler em fundo branco. */
+  --vli-map-navy-fill: #E7ECF5;
+  --vli-map-navy-border: #5C7CA6;
+  --vli-map-navy-label: #1E3A5F;
+  --vli-map-blue-fill: #DCE7F5;
+  --vli-map-blue-border: #2563EB;
+  --vli-map-blue-label: #1D4ED8;
+  --vli-map-gold-fill: #FEF3C7;
+  --vli-map-gold-border: #A16207;
+  --vli-map-yellow-strong: #92400E;
+  /* Ver comentário no bloco dark — MESMO tom nos dois temas de propósito, não invertida como as
+     demais `--vli-map-*` (a bolinha do marco é preenchimento sólido, não texto/borda; escurecer
+     no light a deixaria marrom, exatamente o defeito reportado). */
+  --vli-map-yellow-dot: #F6E05E;
+  --vli-map-teal-fill: #E0F2FE;
+  --vli-map-teal-border: #0369A1;
+  --vli-map-teal-label: #0C4A6E;
+  --vli-map-turquoise-fill: #CCFBF1;
+  --vli-map-turquoise-border: #0D9488;
+  --vli-map-turquoise-label: #0F766E;
+  --vli-map-green-fill: #DCFCE7;
+  --vli-map-green-border: #15803D;
+  --vli-map-green-label: #166534;
+  --vli-map-slate-border: #94A3B8;
+  --vli-map-slate-label: #475569;
+  /* Cinza-azulado neutro — MESMA família de `--vli-border` (2026-08-26), mesmo ajuste do dark
+     mode logo acima: cinza puro lia como amarronzado/bege, trocado por este tom, que fica um
+     pouco mais saturado que `--vli-border` puro pra manter contraste legível contra
+     `--vli-map-canvas-bg`. */
+  --vli-map-gray-fill: #E9EDF3;
+  --vli-map-gray-border: #A8B7CC;
+  --vli-map-gray-label: #4D4D4D;
+  --vli-map-default-label: #334155;
+  --vli-map-composition-fill: var(--vli-surface);
+  --vli-map-composition-accent: var(--vli-map-neutral-light);
+  --vli-map-divider-fill: #E2E8F0;
+  --vli-map-divider-border: #64748B;
+  --vli-map-red-fill: #FBE7E7;
+  --vli-map-red-border: #C23B3B;
+  --vli-map-red-strong: #DC2626;
+  --vli-map-red-label: #B91C1C;
+  --vli-map-brown-fill: #F3E8DC;
+  --vli-map-brown-border: #92603A;
+  --vli-map-brown-label: #6B4A32;
+  --vli-map-amber-fill: #FEF9C3;
+  --vli-map-neutral-light: #475569;
+  --vli-map-segment-locomotiva: #DCE7F5;
+  /* Ver comentário no bloco dark — MESMA cor de marca clareada, borda na cor de marca exata. */
+  --vli-map-segment-vagao: #62A5D2;
+  --vli-map-segment-vagao-border: #0E74BA;
+  --vli-map-segment-vagao-text: #FFFFFF;
+  --vli-map-segment-default: #94A3B8;
+
+  /* Ver comentário no bloco dark — MESMA cor de marca clareada, borda na cor de marca exata. */
+  --vli-map-trem-locomotiva-bg: #F5A96C;
+  --vli-map-trem-locomotiva-border: #EF7A1D;
+  --vli-map-trem-locomotiva-text: #FFFFFF;
+
+  --vli-map-amv-bg: #E7ECF5;
+  --vli-map-amv-border: #9DB0CA;
+  --vli-map-amv-text: #1D4ED8;
+
+  --vli-map-linha-bg1: #E0F2FE;
+  --vli-map-linha-border1: #245E7C;
+  --vli-map-linha-bg2: #CCFBF1;
+  --vli-map-linha-border2: #33A59B;
+
+  /* Ver comentário equivalente no bloco escuro acima — mesmo motivo, mesma generalização. */
+  --vli-hover-tint: var(--vli-surface);
+
+  --vli-shadow: none;
+}
+
+/* ============================================================================
+   Scrollbar customizada — global, para qualquer área com overflow (tabelas,
+   sidebar, painéis, modais). Fina, sem setas, trilho transparente, thumb
+   translúcido que se adapta ao tema ativo via as variáveis acima.
+   ============================================================================ */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--vli-scrollbar-thumb) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--vli-scrollbar-thumb);
+  border-radius: 999px;
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--vli-scrollbar-thumb-hover);
+}
+
+*::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ============================================================================
+   Colapsáveis (accordions) — Bloco/Grupo no Planejamento de Turno, e qualquer
+   outro elemento que use este mesmo padrão. Uma única animação (altura +
+   opacidade juntas) para abrir/fechar — precisa ser UMA animação só, não uma
+   `transition` de opacidade separada, porque o Radix Accordion escuta o evento
+   `animationend` do conteúdo para saber quando desmontá-lo ao fechar; uma
+   segunda transição correndo em paralelo não seria respeitada e cortaria feio.
+   O chevron gira 180° com a mesma duração/curva, via `[data-state]` do Trigger.
+   ============================================================================ */
+@keyframes vli-collapse-open {
+  from { height: 0; opacity: 0; }
+  to   { height: var(--radix-accordion-content-height, auto); opacity: 1; }
+}
+
+@keyframes vli-collapse-close {
+  from { height: var(--radix-accordion-content-height, auto); opacity: 1; }
+  to   { height: 0; opacity: 0; }
+}
+
+.vli-collapsible-content {
+  overflow: hidden;
+}
+
+.vli-collapsible-content[data-state='open'] {
+  animation: vli-collapse-open 250ms ease-in-out;
+}
+
+.vli-collapsible-content[data-state='closed'] {
+  animation: vli-collapse-close 250ms ease-in-out;
+}
+
+.vli-collapsible-trigger .vli-chevron {
+  transition: transform 250ms ease-in-out;
+}
+
+.vli-collapsible-trigger[data-state='open'] .vli-chevron {
+  transform: rotate(180deg);
+}
+
+/* ============================================================================
+   Calendário (seletor de data) — DayPicker (react-day-picker) headless, sem as
+   classes shadcn/Tailwind padrão (que usam os tokens oklch vestigiais, não os
+   --vli-* do tema real). Classe raiz `vli-daypicker`, mapeada via `classNames`
+   no componente que usa o DayPicker.
+   ============================================================================ */
+.vli-daypicker {
+  font-family: 'Manrope', sans-serif;
+}
+
+.vli-daypicker-months {
+  display: flex;
+}
+
+.vli-daypicker-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.125rem 0.625rem;
+}
+
+.vli-daypicker-caption-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--vli-text-hi);
+  text-transform: capitalize;
+}
+
+.vli-daypicker-nav {
+  display: flex;
+  gap: 0.125rem;
+}
+
+.vli-daypicker-nav-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: none;
+  background: transparent;
+  border-radius: 0.25rem;
+  color: var(--vli-text-md);
+  cursor: pointer;
+}
+
+/* Ícone padrão do react-day-picker não tem tamanho próprio — sem isto ele crescia até encher o
+   botão e a seta ficava gigante no calendário do header (2026-09-24, pedido explícito do
+   usuário). Mesmo tamanho dos chevrons pequenos do resto da tela. */
+.vli-daypicker-nav-button svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.vli-daypicker-nav-button:hover {
+  background-color: var(--vli-hover-tint);
+  color: var(--vli-text-hi);
+}
+
+.vli-daypicker-nav-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.vli-daypicker-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.vli-daypicker-head-cell {
+  width: 1.875rem;
+  height: 1.5rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--vli-text-lo);
+  text-transform: uppercase;
+}
+
+.vli-daypicker-cell {
+  padding: 1px;
+  text-align: center;
+}
+
+.vli-daypicker-day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.875rem;
+  height: 1.875rem;
+  margin: 0 auto;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-family: inherit;
+  color: var(--vli-text-hi);
+  cursor: pointer;
+  transition: background-color 0.1s, color 0.1s;
+}
+
+.vli-daypicker-day:hover {
+  background-color: var(--vli-hover-tint);
+}
+
+.vli-daypicker-day-selected,
+.vli-daypicker-day-selected:hover {
+  background-color: var(--vli-primary);
+  border-color: var(--vli-primary);
+  color: #fff;
+  font-weight: 700;
+}
+
+.vli-daypicker-day-today:not(.vli-daypicker-day-selected) {
+  border-color: var(--vli-primary-text);
+  color: var(--vli-primary-text);
+  font-weight: 700;
+}
+
+.vli-daypicker-day-outside {
+  color: var(--vli-text-lo);
+  opacity: 0.4;
+}
+
+.vli-daypicker-day-disabled {
+  color: var(--vli-text-lo);
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
+.vli-daypicker-day-disabled:hover {
+  background-color: transparent;
+}
+
+.vli-linha-selecionavel:focus-visible {
+  outline: 2px solid var(--vli-marca-azul);
+  outline-offset: -2px;
+}
+
+/* Linhas da tabela de Composição — fundo sólido por estado, aplicado por CSS em TODA célula da
+   linha (`> td`), sticky (Pos./Veículo) ou não: um valor único resolvido aqui, nunca inline por
+   célula, então não tem como uma célula ficar num tom diferente das outras (2026-09-29, pedido
+   explícito do usuário — ver comentário de `--vli-linha-retirar-bg` em `:root`). */
+.vli-linha-composicao > td {
+  background-color: var(--vli-panel-bg);
+}
+
+.vli-linha-composicao:hover > td {
+  background-color: var(--vli-hover-tint);
+}
+
+.vli-linha-composicao.vli-linha-retirar > td {
+  background-color: var(--vli-linha-retirar-bg);
+}
+
+.vli-linha-composicao.vli-linha-retirar:hover > td {
+  background-color: var(--vli-linha-retirar-bg-hover);
+}
+
+/* Botão x de remover (painel de Ações operacionais): cinza, vermelho no hover. */
+.vli-btn-remover:hover {
+  color: var(--vli-danger-text) !important;
+  background-color: var(--vli-danger-bg) !important;
+}
+
+/* Wrapper do HeaderTooltip em volta de elemento desabilitado: o filho ocupa a largura toda do
+   <span> — quando um pai flex estica o wrapper, o botão não fica encolhido num canto. */
+.vli-tooltip-desabilitado {
+  display: inline-flex;
+}
+
+.vli-tooltip-desabilitado > * {
+  flex: 1;
+  min-width: 0;
+}

@@ -1,0 +1,102 @@
+{
+  "light": {
+    "surface": {
+      "bg": { "value": "#F7F8FA", "type": "color", "description": "Fundo de página (--vli-bg-deep). App.tsx, PlanejamentoScreen.tsx" },
+      "card": { "value": "#FFFFFF", "type": "color", "description": "Fundo de card/painel (--vli-panel-bg). Tabela da Ficha Operacional, Blocos do Plano de Manobra, dropdowns" },
+      "sidebar": { "value": "#FFFFFF", "type": "color", "description": "Fundo do menu lateral (--vli-sidebar-bg). Sidebar.tsx, PageHeader.tsx" },
+      "inset": { "value": "#F0F3F8", "type": "color", "description": "[bônus] 4ª camada de fundo (--vli-surface) — chips, hover base, trigger de selects. Mais clara que 'card' aqui no light" }
+    },
+    "text": {
+      "primary": { "value": "#101826", "type": "color", "description": "Texto de maior destaque (--vli-text-hi). Títulos, valores, nomes de trem/bloco" },
+      "secondary": { "value": "#465364", "type": "color", "description": "Texto secundário (--vli-text-md). Labels, texto de corpo" },
+      "tertiary": { "value": "#6E7A8A", "type": "color", "description": "[bônus] Texto terciário/muted (--vli-text-lo). Metadados, placeholders, texto desabilitado" }
+    },
+    "border": {
+      "default": { "value": "#D9E1EC", "type": "color", "description": "Borda padrão (--vli-border). Divisórias, contorno de cards/inputs" },
+      "danger": { "value": "#DC2626", "type": "color", "description": "Borda de estado perigo (--vli-danger). Borda esquerda das linhas 'Retirar' na Ficha Operacional" },
+      "warning": { "value": "#B45309", "type": "color", "description": "Borda de estado atenção (--vli-warning). Borda esquerda das linhas 'Com Restrição' na Ficha Operacional" }
+    },
+    "action": {
+      "primary": { "value": "#0E74BA", "type": "color", "description": "Ação primária / azul do header (--vli-primary). Botões 'Confirmar Ficha' e 'Confirmar Plano'" },
+      "primaryHover": { "value": "#0B5C94", "type": "color", "description": "--vli-primary-hover" },
+      "primaryText": { "value": "#0E74BA", "type": "color", "description": "--vli-primary-text — mesmo azul usado como texto/ícone/borda (chips ativos, links, item de nav ativo)" },
+      "accent": { "value": "#EF7A1D", "type": "color", "description": "[bônus] Laranja de marca (--vli-accent). Badge de pendências da Ficha Operacional na sidebar" },
+      "accentHover": { "value": "#D9660E", "type": "color", "description": "--vli-accent-hover" },
+      "activeBg": { "value": "rgba(14, 116, 186, 0.08)", "type": "color", "description": "[bônus] Fundo de item/linha selecionada (--vli-active-bg). Nav ativo, trem selecionado" }
+    },
+    "state": {
+      "hover": { "value": "rgba(16, 24, 32, 0.045)", "type": "color", "description": "[bônus] Overlay de hover genérico (--vli-hover-tint), usado nas duas telas" }
+    },
+    "status": {
+      "success": {
+        "text": { "value": "#15803D", "type": "color", "description": "--vli-success-text" },
+        "bg": { "value": "rgba(22, 163, 74, 0.1)", "type": "color", "description": "--vli-success-bg" },
+        "border": { "value": "#86EFAC", "type": "color", "description": "--vli-success-border — só usado na borda do toast de sucesso (App.tsx), não em linhas/cards" }
+      },
+      "warning": {
+        "text": { "value": "#B45309", "type": "color", "description": "--vli-warning-text (idêntico à --vli-warning base neste tema)" },
+        "bg": { "value": "rgba(180, 83, 9, 0.08)", "type": "color", "description": "--vli-warning-bg" },
+        "bgStrong": { "value": "rgba(180, 83, 9, 0.14)", "type": "color", "description": "--vli-warning-bg-strong — hover da linha 'Com Restrição'" }
+      },
+      "danger": {
+        "text": { "value": "#B91C1C", "type": "color", "description": "--vli-danger-text — DIFERENTE de border.danger (#DC2626); ver nota" },
+        "bg": { "value": "rgba(220, 38, 38, 0.08)", "type": "color", "description": "--vli-danger-bg" },
+        "bgStrong": { "value": "rgba(220, 38, 38, 0.12)", "type": "color", "description": "--vli-danger-bg-strong — hover da linha 'Retirar'" }
+      },
+      "toastSuccess": {
+        "bg": { "value": "#ECFDF3", "type": "color", "description": "[bônus] --vli-toast-success-bg — DIFERENTE de status.success.bg; usado só no toast (App.tsx)" },
+        "text": { "value": "#15803D", "type": "color", "description": "--vli-toast-success-text" }
+      }
+    }
+  },
+  "dark": {
+    "surface": {
+      "bg": { "value": "#0C1218", "type": "color", "description": "Fundo de página (--vli-bg-deep). App.tsx, PlanejamentoScreen.tsx" },
+      "card": { "value": "#18212A", "type": "color", "description": "Fundo de card/painel (--vli-panel-bg). Tabela da Ficha Operacional, Blocos do Plano de Manobra, dropdowns" },
+      "sidebar": { "value": "#0E141B", "type": "color", "description": "Fundo do menu lateral (--vli-sidebar-bg). Sidebar.tsx, PageHeader.tsx" },
+      "inset": { "value": "#212B36", "type": "color", "description": "[bônus] 4ª camada de fundo (--vli-surface) — chips, hover base, trigger de selects. Mais clara que 'card' aqui no dark" }
+    },
+    "text": {
+      "primary": { "value": "#F1F5F9", "type": "color", "description": "Texto de maior destaque (--vli-text-hi). Títulos, valores, nomes de trem/bloco" },
+      "secondary": { "value": "#CBD5E1", "type": "color", "description": "Texto secundário (--vli-text-md). Labels, texto de corpo" },
+      "tertiary": { "value": "#64748B", "type": "color", "description": "[bônus] Texto terciário/muted (--vli-text-lo). Metadados, placeholders, texto desabilitado" }
+    },
+    "border": {
+      "default": { "value": "#313D49", "type": "color", "description": "Borda padrão (--vli-border). Divisórias, contorno de cards/inputs" },
+      "danger": { "value": "#DC2626", "type": "color", "description": "Borda de estado perigo (--vli-danger). Borda esquerda das linhas 'Retirar' na Ficha Operacional" },
+      "warning": { "value": "#F59E0B", "type": "color", "description": "Borda de estado atenção (--vli-warning). Borda esquerda das linhas 'Com Restrição' na Ficha Operacional" }
+    },
+    "action": {
+      "primary": { "value": "#3A7EC6", "type": "color", "description": "Ação primária / azul do header (--vli-primary). Botões 'Confirmar Ficha' e 'Confirmar Plano'" },
+      "primaryHover": { "value": "#2E6BAF", "type": "color", "description": "--vli-primary-hover" },
+      "primaryText": { "value": "#66C2FF", "type": "color", "description": "--vli-primary-text — mesmo azul, mais claro, usado como texto/ícone/borda (chips ativos, links, item de nav ativo)" },
+      "accent": { "value": "#F37A19", "type": "color", "description": "[bônus] Laranja de marca (--vli-accent). Badge de pendências da Ficha Operacional na sidebar" },
+      "accentHover": { "value": "#D86A10", "type": "color", "description": "--vli-accent-hover" },
+      "activeBg": { "value": "rgba(58, 126, 198, 0.16)", "type": "color", "description": "[bônus] Fundo de item/linha selecionada (--vli-active-bg). Nav ativo, trem selecionado" }
+    },
+    "state": {
+      "hover": { "value": "rgba(255, 255, 255, 0.04)", "type": "color", "description": "[bônus] Overlay de hover genérico (--vli-hover-tint), usado nas duas telas" }
+    },
+    "status": {
+      "success": {
+        "text": { "value": "#22C55E", "type": "color", "description": "--vli-success-text (idêntico à --vli-success base neste tema)" },
+        "bg": { "value": "rgba(34, 197, 94, 0.08)", "type": "color", "description": "--vli-success-bg" },
+        "border": { "value": "#22543D", "type": "color", "description": "--vli-success-border — só usado na borda do toast de sucesso (App.tsx), não em linhas/cards" }
+      },
+      "warning": {
+        "text": { "value": "#F59E0B", "type": "color", "description": "--vli-warning-text (idêntico à --vli-warning base neste tema)" },
+        "bg": { "value": "rgba(245, 158, 11, 0.08)", "type": "color", "description": "--vli-warning-bg" },
+        "bgStrong": { "value": "rgba(245, 158, 11, 0.14)", "type": "color", "description": "--vli-warning-bg-strong — hover da linha 'Com Restrição'" }
+      },
+      "danger": {
+        "text": { "value": "#FC8181", "type": "color", "description": "--vli-danger-text — DIFERENTE de border.danger (#DC2626); ver nota" },
+        "bg": { "value": "rgba(220, 38, 38, 0.08)", "type": "color", "description": "--vli-danger-bg" },
+        "bgStrong": { "value": "rgba(220, 38, 38, 0.12)", "type": "color", "description": "--vli-danger-bg-strong — hover da linha 'Retirar'" }
+      },
+      "toastSuccess": {
+        "bg": { "value": "#0A2010", "type": "color", "description": "[bônus] --vli-toast-success-bg — DIFERENTE de status.success.bg; usado só no toast (App.tsx)" },
+        "text": { "value": "#68D391", "type": "color", "description": "--vli-toast-success-text" }
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+/* Tokens Tailwind do componente de mapa topológico (mapa-topologico-prototipo/topological-map),
+ * originalmente copiados verbatim de `src/styles/theme.css` do protótipo (ver COUPLING.md, seção
+ * 3) como valores hex FIXOS — o protótipo isolado nunca teve dark/light, só o tema escuro. Depois
+ * de acoplado no Manobra X (que alterna tema via `[data-theme]`, ver `ThemeContext.tsx`), esses
+ * hex fixos viraram um bug: legenda/chips do mapa ficavam sempre escuros mesmo no light mode.
+ * Corrigido apontando cada token pra o token `--vli-*` equivalente (mesma técnica já usada por
+ * `theme.css` pro namespace shadcn, no bloco `@theme inline` — `inline` é obrigatório aqui porque
+ * o valor é uma referência `var()`, não um literal) — um único ponto de verdade de cor, em vez de
+ * duas paletas paralelas que podem dessincronizar. As cores de DOMÍNIO do mapa em si (tipo de
+ * linha, marcador, status — `train-yard/styles.ts` e `render/Marker.tsx`) continuam hardcoded de
+ * propósito: identidade visual do pátio, não deve mudar com o tema da UI. */
+@theme inline {
+  --color-vli-orange: var(--vli-accent);
+  --color-vli-orange-hover: var(--vli-accent-hover);
+  --color-bg-deep: var(--vli-bg-deep);
+  --color-panel-bg: var(--vli-panel-bg);
+  --color-surface: var(--vli-surface);
+  --color-border-subtle: var(--vli-border);
+  --color-text-hi: var(--vli-text-hi);
+  --color-text-md: var(--vli-text-md);
+  --color-text-lo: var(--vli-text-lo);
+
+  --color-danger: var(--vli-danger);
+  --color-danger-fg: var(--vli-danger-text);
+  --color-success-fg: var(--vli-success-text);
+  --color-success-bg: var(--vli-success-bg);
+  --color-success-border: var(--vli-success-border);
+  --color-warning-train: var(--vli-warning-text);
+  --color-route-blue: var(--vli-primary);
+  --color-route-blue-light: var(--vli-primary-text);
+
+  --font-manrope: 'Manrope', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+
+  --radius-vli: 6px;
+}

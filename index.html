@@ -1,0 +1,44 @@
+
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Protótipo - Manobra X</title>
+      <meta name="description" content="Streamline industrial logistics with a user-friendly dashboard that provides real-time tracking, efficient management tools, and insightful analytics for operators." />
+      <meta name="robots" content="noindex, nofollow" />
+      <style>
+        /* 2026-08-28 — a tentativa de "fake zoom" global (primeiro `zoom: 0.8` no `html`, depois
+           `transform: scale(0.8)` no `body` pra corrigir o `position: fixed`) foi REVERTIDA.
+           O `transform` resolvia o `zoom` não escalar os popovers do Radix, mas introduziu um
+           bug diferente e pior: o Floating UI (motor de posicionamento por trás de todo
+           `Select`/`Popover`/`DropdownMenu` do Radix) calcula a posição do popover em pixels
+           REAIS de tela (via `getBoundingClientRect`, que já reflete a escala), mas o
+           `position: fixed` do popover — cujo containing block virou `body`, transformado — lê
+           esse número como se estivesse no espaço de coordenadas LOCAL (pré-escala) do `body`.
+           Resultado: todo popover nasce deslocado, e o deslocamento cresce proporcionalmente à
+           distância do canto superior esquerdo (bug reportado: "todos dropdown estão mal
+           posicionados... até do importar ficha"). Zoom via CSS (`zoom` OU `transform`) não é
+           compatível com bibliotecas que fazem seu próprio cálculo de posição em JS — só o zoom
+           NATIVO do navegador (Ctrl+-/Ctrl+=) escala de um jeito transparente pra esse cálculo.
+
+           2026-08-31 — resolvido de verdade: `--font-size` (raiz `html`, ver `theme.css`) mudou
+           de 16px pra 12.8px (80%) e toda a base foi auditada pra usar `rem` em vez de `px`
+           hardcoded. Isso encolhe o LAYOUT REAL (nenhuma transformação visual por cima), então
+           não existe o descompasso de espaço de coordenadas dos dois experimentos acima — os
+           próprios popovers calculam e nascem na posição certa, já no tamanho menor. */
+        html, body { height: 100%; margin: 0; }
+        #root { height: 100%; }
+      </style>
+      
+    </head>
+
+    <body>
+      
+      <div id="root"></div>
+      <script type="module" src="/src/main.tsx"></script>
+      
+    </body>
+  </html>
+  

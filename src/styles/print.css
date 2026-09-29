@@ -1,0 +1,77 @@
+/* Utilitário de impressão — usado pela Ficha de Operação / Ficha de Manobra.
+   Ao imprimir, some com toda a tela e mostra apenas o conteúdo marcado com
+   a classe .print-area, forçando um layout claro (papel) independente do
+   tema escuro da aplicação. */
+
+/* Tamanho/orientação de página (A4 retrato ou paisagem) é definido dinamicamente pela
+   função `imprimirComPagina` (src/app/utils/imprimir.ts), que injeta a regra `@page`
+   certa num <style id="print-page-size"> logo antes de chamar window.print() — o Chrome
+   não respeita de forma confiável páginas nomeadas (`@page nome {}` + `page: nome`) para
+   variar tamanho/orientação dentro do mesmo documento, então cada botão de imprimir da
+   aplicação escolhe a orientação certa para o que ele mostra (Ficha = paisagem, Plano de
+   Manobras = retrato). Este @page aqui é só o fallback caso alguém imprima sem passar por
+   um desses botões (ex.: Ctrl+P direto). */
+@page {
+  size: A4 portrait;
+  margin: 15mm;
+}
+
+/* Mostra um bloco só na impressão (ex.: versão estática/somente-leitura da
+   tabela, sem <select>/<input>) e some com ele na tela normal. */
+.only-print {
+  display: none;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+
+  .print-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    padding: 24px;
+  }
+
+  .print-area * {
+    background: transparent !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: none !important;
+  }
+
+  .print-area .print-badge-alerta {
+    color: #b91c1c !important;
+    font-weight: 700 !important;
+  }
+
+  /* Vagão incluído na composição "Depois" do Plano de Manobras. */
+  .print-area .print-badge-sucesso {
+    color: #15803d !important;
+    font-weight: 700 !important;
+  }
+
+  .only-print {
+    display: block;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* Impressão em lote (ex.: "Confirmar Plano Geral" imprimindo o turno completo) — cada
+     trem vira um .print-area próprio; a partir do segundo em diante, começa em página nova. */
+  .print-area + .print-area {
+    break-before: page;
+    page-break-before: always;
+  }
+}
