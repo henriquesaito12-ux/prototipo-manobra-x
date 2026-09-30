@@ -14,6 +14,7 @@ import {
   User,
   ClipboardCheck,
   FileText,
+  Info,
   Loader2,
   Minus,
   Plus,
@@ -44,6 +45,7 @@ import {
 import { fichasMock } from '../data/fichaOperacao';
 import { DURACAO_TOTAL_J105, TREM_J105_V2, formatarRelogioJ105 } from '../data/animacaoJ105';
 import { fichaPassoJ105V2, type FichaPassoJ105V2 } from '../data/fichaPassosJ105V2';
+import { passoDoEtapaId } from '../data/visualJ105';
 import { COMPOSICAO_GERAL_J105_V2, metricasGeraisJ105V2, type BlocoComposicaoGeralJ105V2 } from '../data/composicaoGeralJ105V2';
 import { SecaoCartao, HeaderTooltip } from './PageHeader';
 import LogoVLI from '../../imports/Logo_VLI.svg';
@@ -2170,30 +2172,34 @@ function MetricasGeraisSecao({ plano }: { plano: PlanoManobra }) {
 
 /** Um valor da faixa compacta de métricas do J105 V2 — rótulo pequeno em cima, valor logo abaixo,
  *  sem card próprio (a faixa inteira é UM painel, as métricas são separadas por divisória). */
-function MetricaFaixa({ label, children, detalhe, primeira = false }: { label: string; children: React.ReactNode; detalhe?: React.ReactNode; primeira?: boolean }) {
+function MetricaFaixa({ label, children, detalhe }: { label: string; children: React.ReactNode; detalhe?: React.ReactNode }) {
+  // Divisória à esquerda de TODAS; a da 1ª de cada linha cai fora da área visível (ver o
+  // `overflow: hidden` + margem negativa em `MetricasGeraisFaixaJ105V2`), então quando o painel
+  // estreita e as métricas quebram de linha nenhuma fica com divisória pendurada.
   return (
-    <div className="flex flex-col" style={{ gap: '0.1875rem', minWidth: 0, paddingLeft: primeira ? 0 : '0.875rem', borderLeft: primeira ? undefined : `1px solid ${DIVISOR_FICHA}` }}>
-      <span style={{ fontSize: '0.5625rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: TEXT_LO, fontFamily: FONT, whiteSpace: 'nowrap' }}>
+    <div className="flex flex-col" style={{ flex: '0 1 auto', gap: '0.1875rem', minWidth: 0, padding: '0 1.25rem 0 0.875rem', borderLeft: `1px solid ${DIVISOR_FICHA}` }}>
+      <span style={{ fontSize: '0.5625rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: TEXT_LO, fontFamily: FONT }}>
         {label}
       </span>
-      <span className="flex items-center" style={{ gap: '0.25rem', fontSize: '1.125rem', fontWeight: 700, color: TEXT_HI, fontFamily: FONT, whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums' }}>
+      <span className="flex flex-wrap items-center" style={{ gap: '0 0.25rem', fontSize: '1.125rem', fontWeight: 700, color: TEXT_HI, fontFamily: FONT, fontVariantNumeric: 'tabular-nums' }}>
         {children}
       </span>
       {detalhe && (
-        <span style={{ fontSize: '0.59375rem', color: TEXT_LO, fontFamily: FONT, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{detalhe}</span>
+        <span style={{ fontSize: '0.59375rem', color: TEXT_LO, fontFamily: FONT }}>{detalhe}</span>
       )}
     </div>
   );
 }
 
 const formatarMetros = (m: number) => m.toLocaleString('pt-BR');
+const formatarToneladas = (t: number) => t.toLocaleString('pt-BR', { maximumFractionDigits: 1 });
 
 /**
  * "Métricas Gerais" do J105 V2 — 2026-09-24, pedido explícito do usuário: valores reais (ver
  * `metricasGeraisJ105V2`) e bem menos altura que os 5 cards de `MetricasGeraisSecao`, pra
  * Composição Geral do Trem (o que mais se consulta nesta aba) subir na tela. Uma faixa só, em
  * dois níveis de peso:
- * - linha principal — Vagões, Tempo Planejado e Comprimento, o que muda de trem pra trem e se
+ * - linha principal — Vagões, Tempo Planejado, Comprimento e Peso Bruto, o que muda de trem pra trem e se
  *   confere no dia a dia (valor maior, Antes → Depois);
  * - linha de apoio — Locomotivas e Blocos, consulta ocasional (e já visíveis nos chips da
  *   Composição Geral logo abaixo), em texto corrido discreto, sem perder nenhum id.
@@ -2203,14 +2209,13 @@ function MetricasGeraisFaixaJ105V2() {
   const m = useMemo(() => metricasGeraisJ105V2(DURACAO_TOTAL_J105), []);
   return (
     <SecaoCartao icone={BarChart3} titulo="Métricas Gerais">
-      {/* Grid de 3 colunas (não flex-wrap): em painel estreito as três seguem lado a lado em vez
-          de uma quebrar sozinha pra linha de baixo com a divisória pendurada. Colunas do tamanho
-          do conteúdo (não 3 iguais): com o valor em 18px, "1.479 → 1.417 m" não cabia num terço
-          e a seta era espremida até sumir. */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, auto)', justifyContent: 'start', columnGap: '1.25rem', padding: '0.75rem 0' }}>
+      {/* flex-wrap: em painel estreito as métricas descem pra linha de baixo (e o valor de cada
+          uma quebra dentro dela) em vez de se sobrepor. A margem negativa empurra a divisória da
+          1ª métrica de cada linha pra fora do `overflow: hidden`. */}
+      <div style={{ overflow: 'hidden', padding: '0.75rem 0' }}>
+      <div className="flex flex-wrap" style={{ rowGap: '0.75rem', marginLeft: 'calc(-0.875rem - 1px)' }}>
         <MetricaFaixa
           label="Vagões"
-          primeira
           detalhe={
             <>
               <span style={{ color: DANGER_TEXT, fontWeight: 600 }}>{m.retirados} retirados</span>
@@ -2231,6 +2236,12 @@ function MetricasGeraisFaixaJ105V2() {
           <ArrowRight size="0.75rem" color={TEXT_LO} />
           {formatarMetros(m.comprimentoDepoisM)} m
         </MetricaFaixa>
+        <MetricaFaixa label="Peso Bruto" detalhe="inicial → final">
+          {formatarToneladas(m.pesoBrutoAntesT)}
+          <ArrowRight size="0.75rem" color={TEXT_LO} />
+          {formatarToneladas(m.pesoBrutoDepoisT)} t
+        </MetricaFaixa>
+      </div>
       </div>
       <div
         className="flex flex-wrap items-center"
@@ -2697,6 +2708,139 @@ function FichaTecnicaPassoJ105({ ficha, envolvidos, procedimento }: { ficha: Fic
         <div style={secao}>
           <div style={{ ...ROTULO_FICHA, marginBottom: '0.25rem' }}>Procedimento</div>
           <div style={{ fontSize: '0.6875rem', color: TEXT_MD, lineHeight: 1.55 }}>{procedimento}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Passo corrente do J105 V2 em cima do mapa — 2026-09-30, pedido explícito do usuário: no modo
+ * "Só Visão Topológica Atual" a lista de passos some, então o mapa precisa se bastar. Barra
+ * discreta de UMA linha (mesma altura dos botões de zoom, fundo translúcido, sem sombra), pra
+ * informar sem competir com o mapa: número + título do passo e, em texto secundário, os mesmos
+ * dados da ficha da aba "Manobras" (`fichaPassoJ105V2`). Procedimento e responsáveis — texto
+ * longo, consulta ocasional — ficam atrás do botão ⓘ, num painel que só abre sob demanda. Sem
+ * setas próprias: a navegação é a dos controles da animação, que já movem este mesmo passo.
+ */
+export function PassoAtualMapaJ105({ plano, passo, totalPassos }: { plano: PlanoManobra; passo: number; totalPassos: number }) {
+  const [detalhesAbertos, setDetalhesAbertos] = useState(false);
+  const cluster = useMemo(() => {
+    for (const bloco of plano.blocos) {
+      for (const c of bloco.clusters) {
+        if (c.etapas.some((e) => passoDoEtapaId(e.id) === passo)) return c;
+      }
+    }
+    return undefined;
+  }, [plano, passo]);
+  const ficha = fichaPassoJ105V2(passo);
+  if (!cluster) return null;
+  const etapa = cluster.etapas[0];
+  const envolvidos = etapa?.agentes && etapa.agentes.length > 0 ? etapa.agentes : [];
+  const procedimento = etapa?.instrucaoCompleta;
+  const temDetalhes = !!procedimento || envolvidos.length > 0;
+
+  const contexto = ficha && [ficha.bloco && `Bloco ${ficha.bloco}`, ficha.grupo && ficha.grupo].filter(Boolean).join(' · ');
+  const IconeDirecao = ficha?.direcao === 'ECJ' ? ArrowLeft : ArrowRight;
+  const dados: { icone: typeof Clock; label: string; valor: string }[] = ficha
+    ? [
+        { icone: MapPin, label: 'Linha', valor: ficha.linha },
+        ...(ficha.referencia ? [{ icone: Flag, label: 'Referência', valor: ficha.referencia }] : []),
+        ...(ficha.direcao ? [{ icone: IconeDirecao, label: 'Direção', valor: ficha.direcao }] : []),
+        { icone: Ruler, label: 'Distância', valor: `${ficha.distanciaM.toLocaleString('pt-BR')} m` },
+        { icone: Clock, label: 'Duração', valor: ficha.duracao },
+      ]
+    : [];
+  const fundo = 'color-mix(in srgb, var(--vli-panel-bg) 88%, transparent)';
+  const separador = <span aria-hidden style={{ width: 1, height: '0.75rem', backgroundColor: BORDER, flexShrink: 0 }} />;
+
+  return (
+    <div className="relative" style={{ display: 'inline-flex', maxWidth: '100%', fontFamily: FONT, cursor: 'default' }}>
+      <div
+        className="flex items-center"
+        style={{
+          minWidth: 0,
+          height: '1.875rem',
+          gap: '0.5rem',
+          padding: '0 0.25rem 0 0.3125rem',
+          backgroundColor: fundo,
+          backdropFilter: 'blur(4px)',
+          border: `1px solid ${BORDER}`,
+          borderRadius: RADIUS,
+        }}
+      >
+        <span
+          className="flex items-center justify-center shrink-0"
+          title={`Passo ${passo} de ${totalPassos}`}
+          style={{ minWidth: '1.25rem', height: '1.25rem', padding: '0 0.25rem', borderRadius: '0.25rem', backgroundColor: VLI_PRIMARY_SOLID, color: '#fff', fontSize: '0.625rem', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}
+        >
+          {passo}
+        </span>
+        <span title={cluster.resumoProblema} style={{ flex: '1 1 auto', minWidth: '6rem', fontSize: '0.75rem', fontWeight: 600, color: TEXT_HI, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {cluster.resumoProblema}
+        </span>
+        {dados.length > 0 && (
+          <>
+            {separador}
+            <span className="flex items-center" style={{ flex: '0 1 auto', minWidth: 0, gap: '0.625rem', overflow: 'hidden', whiteSpace: 'nowrap', fontSize: '0.6875rem', color: TEXT_MD, fontVariantNumeric: 'tabular-nums' }}>
+              {contexto && <span style={{ ...ROTULO_FICHA, flexShrink: 0 }}>{contexto}</span>}
+              {dados.map(({ icone: Icone, label, valor }) => (
+                <span key={label} className="inline-flex items-center" title={label} style={{ gap: '0.1875rem', flexShrink: 0 }}>
+                  <Icone size="0.6875rem" strokeWidth={2} color={TEXT_LO} aria-label={label} />
+                  {valor}
+                </span>
+              ))}
+            </span>
+          </>
+        )}
+        {temDetalhes && (
+          <button
+            type="button"
+            onClick={() => setDetalhesAbertos((v) => !v)}
+            aria-expanded={detalhesAbertos}
+            aria-label={detalhesAbertos ? 'Ocultar procedimento' : 'Ver procedimento'}
+            title={detalhesAbertos ? 'Ocultar procedimento' : 'Ver procedimento e responsáveis'}
+            className="flex items-center justify-center shrink-0"
+            style={{
+              width: '1.375rem', height: '1.375rem', border: 'none', borderRadius: '0.25rem', padding: 0, cursor: 'pointer',
+              backgroundColor: detalhesAbertos ? 'var(--vli-active-bg)' : 'transparent',
+              color: detalhesAbertos ? VLI_PRIMARY_SOLID : TEXT_LO,
+            }}
+          >
+            <Info size="0.8125rem" strokeWidth={2} />
+          </button>
+        )}
+      </div>
+
+      {detalhesAbertos && temDetalhes && (
+        <div
+          className="absolute"
+          style={{
+            top: 'calc(100% + 0.25rem)',
+            left: 0,
+            width: 'min(28rem, 100%)',
+            minWidth: 'min(18rem, 100%)',
+            maxHeight: '14rem',
+            overflowY: 'auto',
+            padding: '0.625rem 0.75rem',
+            backgroundColor: PANEL_BG,
+            border: `1px solid ${BORDER}`,
+            borderRadius: RADIUS,
+            boxShadow: 'var(--vli-shadow)',
+            zIndex: 1,
+          }}
+        >
+          {procedimento && (
+            <>
+              <div style={{ ...ROTULO_FICHA, marginBottom: '0.25rem' }}>Procedimento</div>
+              <div style={{ fontSize: '0.6875rem', color: TEXT_MD, lineHeight: 1.55 }}>{procedimento}</div>
+            </>
+          )}
+          {envolvidos.length > 0 && (
+            <div className="flex flex-wrap items-center" style={{ gap: '0.25rem', marginTop: procedimento ? '0.5rem' : 0 }}>
+              {envolvidos.map((nome) => <ResponsavelPill key={nome} nome={nome} />)}
+            </div>
+          )}
         </div>
       )}
     </div>

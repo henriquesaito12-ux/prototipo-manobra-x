@@ -24,7 +24,7 @@ import { LegendaJ105V2 } from './topological-map/LegendaJ105V2';
 import { EHT_TOPOLOGY } from './topological-map/train-yard/mocks/eht';
 import { computeLegendPresence, createEssentialLegendFilter, filterTopology, type LegendFilterState } from './topological-map/train-yard/filterTopology';
 import { backgroundElementIdForTrem, buildTrainComposition, filterUnapprovedBackgroundTrains, injectTrainComposition, marcarRestricaoFerradura, pickLineIdForTrem, removerComposicoesDeFundo } from './topological-map/planoTopologiaAdapter';
-import { PlanManobraX, construirDestaqueEtapa } from './PlanManobraX';
+import { PlanManobraX, PassoAtualMapaJ105, construirDestaqueEtapa } from './PlanManobraX';
 import { MapaNavegacaoPainel } from './MapaNavegacaoPainel';
 import { RestrictionsPanel, type Restricao } from './RestrictionsPanel';
 import { ConfirmarPlanoModal } from './ConfirmarPlanoModal';
@@ -752,7 +752,11 @@ function ZoomableMapa({
   detalheAutomatico,
   onDetalheAutomaticoChange,
   veiculosFoco,
+  soMapa = false,
 }: {
+  /** Layout "Só Visão Topológica Atual" — sem a lista de passos ao lado, o J105 V2 mostra a ficha
+   *  do passo corrente no topo do mapa (`PassoAtualMapaJ105`). */
+  soMapa?: boolean;
   /** Trem ativo na barra de seleção do Plano de Manobra — decide EM QUAL LINHA o mapa desenha a
    *  composição (ver `planoTopologiaAdapter.ts`). Trocar de trem troca de linha (não é posição
    *  real do pátio — ver comentário no adapter). */
@@ -1506,6 +1510,14 @@ function ZoomableMapa({
           </div>
         )}
 
+        {/* J105 V2 em "Só Visão Topológica Atual": ficha do passo corrente, pra o mapa se bastar
+           sem a lista de passos (2026-09-30, pedido explícito do usuário). */}
+        {modoJ105V2 && !v2SemFicha && soMapa && (
+          <div style={{ flex: '1 1 20rem', minWidth: 0 }} onPointerDown={(e) => e.stopPropagation()} onWheel={(e) => e.stopPropagation()}>
+            <PassoAtualMapaJ105 plano={plano} passo={passoDoRelogio} totalPassos={TOTAL_PASSOS_J105} />
+          </div>
+        )}
+
         {/* `onPointerDown` com `stopPropagation` — sem isso, o clique nestes botões também
            disparava o `handlePointerDown` do container (usado pra arrastar o mapa), que chama
            `setPointerCapture` nele sempre que zoom > 1. Isso redireciona os eventos de ponteiro
@@ -1555,7 +1567,10 @@ function TopologicalPanel({
   detalheAutomatico,
   onDetalheAutomaticoChange,
   veiculosFoco,
+  soMapa,
 }: {
+  /** Repassado direto a `ZoomableMapa` — ver doc lá. */
+  soMapa?: boolean;
   trenSelecionado: string;
   /** Repassado direto a `ZoomableMapa` — opções/handler do `SeletorTremMapa` flutuante. */
   trens: string[];
@@ -1627,6 +1642,7 @@ function TopologicalPanel({
           detalheAutomatico={detalheAutomatico}
           onDetalheAutomaticoChange={onDetalheAutomaticoChange}
           veiculosFoco={veiculosFoco}
+          soMapa={soMapa}
         />
       </div>
       {/* J105 V2: legenda própria, só de referência (sem toggles), com os elementos que o mapa
@@ -1824,6 +1840,7 @@ function MapaSidePanel({
                   detalheAutomatico={detalheAutomatico}
                   onDetalheAutomaticoChange={setDetalheAutomatico}
                   veiculosFoco={veiculosFoco}
+                  soMapa={fullWidth}
                 />
                 <RestrictionsPanel
                   style={{

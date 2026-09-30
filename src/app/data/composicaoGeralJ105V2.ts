@@ -10,6 +10,8 @@
 // (`incluido`) logo atrás da locomotiva líder.
 
 import type { ItemComposicao } from './planoManobra';
+import { interpretarPlanilha, type PlanilhaBruta } from '../utils/fichaImport';
+import planilhaJ105 from './fixtures/fichaJ105.planilha.json';
 
 export interface BlocoComposicaoGeralJ105V2 {
   letra: 'A' | 'B' | 'C';
@@ -143,12 +145,28 @@ export interface MetricasGeraisJ105V2 {
   incluidos: number;
   comprimentoAntesM: number;
   comprimentoDepoisM: number;
+  /** Soma do Tb (peso bruto, t) de cada veículo, Antes → Depois. */
+  pesoBrutoAntesT: number;
+  pesoBrutoDepoisT: number;
   /** Duração total do plano, em segundos. */
   tempoPlanejadoS: number;
 }
 
 const COMPRIMENTO_INICIAL_M = 1479;
 const COMPRIMENTO_FINAL_M = 1417;
+
+/** Tb de cada veículo, por número, lido da planilha real do J105 (Ficha do trem + Visão pátio —
+ *  o vagão bom incluído só existe na Visão pátio). Veículo sem Tb conta como 0. */
+function mapearPesosBrutos(): Map<string, number> {
+  const { leitura } = interpretarPlanilha(planilhaJ105 as PlanilhaBruta);
+  const pesos = new Map<string, number>();
+  for (const v of [...leitura.patioLocomotivas, ...leitura.patioVagoes, ...leitura.composicao]) {
+    if (v.pesoBrutoT != null) pesos.set(v.numero, v.pesoBrutoT);
+  }
+  return pesos;
+}
+const PESO_BRUTO_T = mapearPesosBrutos();
+const somarPesoBruto = (itens: ItemComposicao[]) => itens.reduce((s, i) => s + (PESO_BRUTO_T.get(i.id) ?? 0), 0);
 
 export function metricasGeraisJ105V2(tempoPlanejadoS: number): MetricasGeraisJ105V2 {
   const antesTodos = COMPOSICAO_GERAL_J105_V2.flatMap((b) => b.antes);
@@ -162,6 +180,8 @@ export function metricasGeraisJ105V2(tempoPlanejadoS: number): MetricasGeraisJ10
     incluidos: depoisTodos.filter((i) => i.tipo === 'incluido').length,
     comprimentoAntesM: COMPRIMENTO_INICIAL_M,
     comprimentoDepoisM: COMPRIMENTO_FINAL_M,
+    pesoBrutoAntesT: somarPesoBruto(antesTodos),
+    pesoBrutoDepoisT: somarPesoBruto(depoisTodos),
     tempoPlanejadoS,
   };
 }
