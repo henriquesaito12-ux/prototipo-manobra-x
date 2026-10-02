@@ -8,7 +8,16 @@
 // integração mandar um dado novo, se a fonte mudou desde a correção — é isso que permite aplicar
 // qualquer uma das regras de conflito (`RegraConflito`) sem mudar este modelo.
 
+//
+// Além da correção de campo, o operador ajusta QUAIS veículos estão no pátio (o dado do UNILOG pode
+// não refletir a realidade): inclui veículos que a fonte não trouxe (`VeiculoManual`, registro
+// próprio, sem valor original) e desconsidera veículos da fonte (`Desconsideracao`, override sobre
+// o veículo — o dado original nunca é apagado). A visão final aplica, nesta ordem: fonte →
+// correções de Linha/Posição → inclusões manuais e desconsiderações (`montarPatio`).
+
 export type Valor = string | number | undefined;
+
+export type TipoVeiculoPatio = 'vagao' | 'locomotiva';
 
 export interface OverrideCampo {
   /** Valor que a fonte tinha quando o operador corrigiu. */
@@ -23,13 +32,66 @@ export interface OverrideCampo {
 /** Overrides de um veículo, por campo. */
 export type OverridesVeiculo = Record<string, OverrideCampo>;
 
+/** Dados de um veículo incluído pelo operador. Série, número, Linha e Posição são obrigatórios
+ *  (e, no vagão, a Situação); o resto é opcional. */
+export interface DadosVeiculoManual {
+  serie: string;
+  numero: string;
+  linha: string;
+  seq: number;
+  /** Só vagão — mesma grafia da fonte (ex.: "Ag Tração"). */
+  atividade?: string;
+  mercadoria?: string;
+  pedido?: string;
+  pesoUtilT?: number;
+  pesoBrutoT?: number;
+  origem?: string;
+  destino?: string;
+  remetente?: string;
+  destinatario?: string;
+  /** Só locomotiva. */
+  combustivelL?: number;
+  /** Só locomotiva — "Frente"/"Traseira". */
+  posicaoTrem?: string;
+}
+
+/** Veículo que não veio da fonte. Não tem valor original; pode ser excluído de verdade. */
+export interface VeiculoManual {
+  origem: 'manual';
+  tipo: TipoVeiculoPatio;
+  dados: DadosVeiculoManual;
+  autor: string;
+  /** Data/hora da inclusão (ISO). */
+  em: string;
+  /** Última vez que Linha/Posição foi alterada depois da inclusão — é quando o veículo entra na
+   *  sequência da linha (`aplicarSequencia`, `patioFicha.ts`). Ausente = na inclusão. */
+  posicionadoEm?: string;
+}
+
+/** Veículo da fonte marcado para NÃO entrar no plano. A linha da fonte continua intacta. */
+export interface Desconsideracao {
+  desconsiderado: true;
+  motivo?: string;
+  autor: string;
+  em: string;
+  /** Identificação do veículo na fonte quando foi desconsiderado — se uma atualização da fonte
+   *  deixar de trazê-lo, a desconsideração fica órfã (conflito, ver `conflitosPatio`). */
+  serie: string;
+  numero: string;
+}
+
 export interface CorrecoesLeitura {
   /** Chave = identidade estável do veículo no pátio (`chaveVeiculoPatio`, `patioFicha.ts`). */
   patio: Record<string, OverridesVeiculo>;
+  /** Veículos incluídos pelo operador. Chave = `manual:<tipo>:<id>` (também é a chave do veículo
+   *  na visão do pátio). */
+  manuais: Record<string, VeiculoManual>;
+  /** Desconsiderações, pela mesma chave de `patio` (só veículos da fonte). */
+  desconsiderados: Record<string, Desconsideracao>;
 }
 
 export function correcoesVazias(): CorrecoesLeitura {
-  return { patio: {} };
+  return { patio: {}, manuais: {}, desconsiderados: {} };
 }
 
 /** Quantidade de campos corrigidos manualmente. */
@@ -101,4 +163,93 @@ export function restaurarCampo(c: CorrecoesLeitura, chave: string, campo: string
   if (Object.keys(campos).length === 0) delete patio[chave];
   else patio[chave] = campos;
   return { ...c, patio };
+}
+
+// ---------------------------------------------------------------------------------------
+// Inclusão manual e desconsideração (puras)
+// ---------------------------------------------------------------------------------------
+
+let contadorManual = 0;
+
+export const ehChaveManual = (chave: string) => chave.startsWith('manual:');
+
+/** Inclui um veículo que não veio da fonte. Devolve as correções e a chave do novo veículo. */
+export function adicionarVeiculoManual(
+  c: CorrecoesLeitura,
+  tipo: TipoVeiculoPatio,
+  dados: DadosVeiculoManual,
+  autor: string,
+  em: string = new Date().toISOString(),
+): { correcoes: CorrecoesLeitura; chave: string } {
+  contadorManual += 1;
+  const chave = `manual:${tipo}:${Date.now().toString(36)}-${contadorManual}`;
+  return { correcoes: { ...c, manuais: { ...(c.manuais ?? {}), [chave]: { origem: 'manual', tipo, dados, autor, em } } }, chave };
+}
+
+/** Altera Linha/Posição de um veículo manual — direto no registro (não há valor da fonte pra
+ *  guardar como original). */
+export function editarVeiculoManual(
+  c: CorrecoesLeitura,
+  chave: string,
+  posicao: { linha: string; seq: number },
+  em: string = new Date().toISOString(),
+): CorrecoesLeitura {
+  const atual = c.manuais?.[chave];
+  if (!atual) return c;
+  // Mover = sair da posição antiga e entrar na nova AGORA (por isso `posicionadoEm`).
+  return { ...c, manuais: { ...c.manuais, [chave]: { ...atual, dados: { ...atual.dados, ...posicao }, posicionadoEm: em } } };
+}
+
+/** "Excluir": só veículo manual é apagado de verdade. */
+export function excluirVeiculoManual(c: CorrecoesLeitura, chave: string): CorrecoesLeitura {
+  if (!c.manuais?.[chave]) return c;
+  const manuais = { ...c.manuais };
+  delete manuais[chave];
+  return { ...c, manuais };
+}
+
+/** "Reverter": desfaz TODAS as alterações de um tipo de veículo — movimentações de Linha/Posição,
+ *  inclusões manuais (excluídas) e desconsiderações —, voltando ao dado da fonte. As chaves já
+ *  começam pelo tipo (`vagao:…`, `locomotiva:…`, `manual:<tipo>:…`). */
+export function reverterTipo(c: CorrecoesLeitura, tipo: TipoVeiculoPatio): CorrecoesLeitura {
+  const doTipo = (chave: string) => chave.startsWith(`${tipo}:`) || chave.startsWith(`manual:${tipo}:`);
+  const semTipo = <V,>(r: Record<string, V> | undefined) => Object.fromEntries(Object.entries(r ?? {}).filter(([k]) => !doTipo(k)));
+  return { ...c, patio: semTipo(c.patio), manuais: semTipo(c.manuais), desconsiderados: semTipo(c.desconsiderados) };
+}
+
+/** "Desconsiderar no plano" — só veículo da fonte; o dado original não muda. */
+export function desconsiderarVeiculo(
+  c: CorrecoesLeitura,
+  chave: string,
+  veiculo: { serie: string; numero: string },
+  motivo: string | undefined,
+  autor: string,
+  em: string = new Date().toISOString(),
+): CorrecoesLeitura {
+  if (ehChaveManual(chave)) return c;
+  const m = motivo?.trim() || undefined;
+  return { ...c, desconsiderados: { ...(c.desconsiderados ?? {}), [chave]: { desconsiderado: true, motivo: m, autor, em, serie: veiculo.serie, numero: veiculo.numero } } };
+}
+
+/** "Considerar novamente": desfaz a desconsideração. */
+export function considerarNovamente(c: CorrecoesLeitura, chave: string): CorrecoesLeitura {
+  if (!c.desconsiderados?.[chave]) return c;
+  const desconsiderados = { ...c.desconsiderados };
+  delete desconsiderados[chave];
+  return { ...c, desconsiderados };
+}
+
+// ---------------------------------------------------------------------------------------
+// Conflito fonte × inclusão/desconsideração — mesma regra (`RegraConflito`) dos campos
+// ---------------------------------------------------------------------------------------
+//   - Fonte passa a trazer um veículo igual (série + número) a um incluído manualmente:
+//       'manterCorrecao' → vale o registro manual e a linha da fonte fica oculta;
+//       'aceitarFonte'   → vale a linha da fonte e o registro manual fica guardado, sem aplicar;
+//       'sinalizar'      → como 'manterCorrecao', com o veículo marcado como em conflito.
+//   - Fonte deixa de trazer um veículo desconsiderado: não há o que exibir; a desconsideração
+//     fica guardada (órfã) e, com 'sinalizar', é listada como conflito.
+
+/** O registro manual vale (true) ou a linha da fonte igual a ele vale (false)? */
+export function manualPrevalece(regra: RegraConflito = REGRA_CONFLITO_PADRAO): boolean {
+  return regra !== 'aceitarFonte';
 }

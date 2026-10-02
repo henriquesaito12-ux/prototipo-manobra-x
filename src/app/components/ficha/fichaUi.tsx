@@ -2,7 +2,8 @@
 // aqui conhece a origem do dado (upload/integração).
 import { forwardRef, useEffect, useState } from 'react';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
-import { AlertTriangle, ArrowDown, ArrowUp, Ban, Check, ChevronsUpDown, Filter, Info, Minus, Plus, ShieldCheck, X, XCircle, type LucideIcon } from 'lucide-react';
+import * as SelectPrimitive from '@radix-ui/react-select';
+import { AlertTriangle, ArrowDown, ArrowUp, Ban, Check, ChevronDown, ChevronsUpDown, Filter, Info, Minus, Plus, ShieldCheck, X, XCircle, type LucideIcon } from 'lucide-react';
 import { HeaderTooltip } from '../PageHeader';
 import { dicaColuna, type TipoRestricao, type TomAtividade } from '../../data/glossarioFicha';
 
@@ -84,6 +85,9 @@ export const thStyle: React.CSSProperties = {
   backgroundColor: T.panel,
 };
 
+/** Separação da coluna fixa à direita (ex.: Ações do Pátio) do conteúdo que rola por baixo dela. */
+export const SOMBRA_FIXA_DIREITA = 'inset 1px 0 0 var(--vli-border), -0.625rem 0 0.75rem -0.625rem rgba(0,0,0,0.35)';
+
 export function tdStyle(extra?: React.CSSProperties): React.CSSProperties {
   return {
     padding: '0.4375rem 0.75rem',
@@ -152,7 +156,9 @@ export function Th({ children, colunas, fonte = false, alinhar, largura, ordem, 
   ordem?: DirecaoOrdem | null;
   onOrdenar?: () => void;
   /** Coluna fixa durante a rolagem horizontal (ex.: Linha/Posição/Veículo no Pátio). */
-  sticky?: { left: string };
+  /** Coluna fixa durante a rolagem horizontal (ex.: Linha/Posição/Veículo à esquerda e Ações à
+   *  direita no Pátio). Fixa à direita ganha a sombra de separação `SOMBRA_FIXA_DIREITA`. */
+  sticky?: { left?: string; right?: string };
 }) {
   let conteudo: React.ReactNode = children;
   if (colunas && colunas.length > 0) {
@@ -191,9 +197,13 @@ export function Th({ children, colunas, fonte = false, alinhar, largura, ordem, 
         ...thStyle,
         textAlign: alinhar ?? 'left',
         width: largura,
+        // Coluna fixa não pode ser comprimida pela tabela: o deslocamento (`left`) das colunas
+        // fixas seguintes é calculado a partir desta largura.
+        ...(sticky && largura && { minWidth: largura, maxWidth: largura }),
         cursor: onOrdenar ? 'pointer' : undefined,
         color: ordem ? T.hi : thStyle.color,
-        ...(sticky && { position: 'sticky', left: sticky.left, zIndex: 2 }),
+        ...(sticky && { position: 'sticky', left: sticky.left, right: sticky.right, zIndex: 2 }),
+        ...(sticky?.right !== undefined && { boxShadow: SOMBRA_FIXA_DIREITA }),
       }}
     >
       {conteudo}
@@ -742,5 +752,127 @@ export function TabelaSangrada({ children, minWidth }: { children: React.ReactNo
     <div style={{ overflowX: 'auto', margin: '0 -0.875rem' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', minWidth }}>{children}</table>
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------------------
+// Dropdown compacto de célula (edição do Pátio)
+// ---------------------------------------------------------------------------------------
+
+export interface OpcaoDropdown {
+  valor: string;
+  rotulo: string;
+}
+
+/**
+ * Dropdown de célula de tabela — mesma linguagem dos dropdowns do header (`PatioHeaderDropdown`,
+ * `DataHeaderDropdown`, `PageHeader.tsx`): ChevronDown que gira ao abrir, painel com a mesma
+ * superfície/sombra e transição de abertura, item com hover e ✓ no selecionado. Compacto (altura
+ * de célula) e com altura máxima: listas longas (ex.: 28 posições da L3) rolam DENTRO do painel,
+ * em vez de um select nativo do tamanho da tela (2026-10-02, pedido explícito do usuário).
+ * Valor vazio mostra o `placeholder`.
+ */
+export function DropdownCelula({ valor, onChange, opcoes, rotulo, placeholder = 'Selecione', largura, invalido, desabilitado, numerico, tamanho = 'compacto' }: {
+  valor: string;
+  onChange: (v: string) => void;
+  opcoes: OpcaoDropdown[];
+  /** aria-label do campo. */
+  rotulo: string;
+  placeholder?: string;
+  largura: string;
+  invalido?: boolean;
+  desabilitado?: boolean;
+  /** `padrao`: altura dos campos de formulário/painel (1,75rem, ex.: Ações operacionais);
+   *  `compacto` (default): altura de célula de tabela. */
+  tamanho?: 'compacto' | 'padrao';
+  /** Números alinhados (tabular-nums) — ex.: Posição. */
+  numerico?: boolean;
+}) {
+  const [aberto, setAberto] = useState(false);
+  const [hover, setHover] = useState(false);
+  const destacado = !desabilitado && (aberto || hover);
+  const padrao = tamanho === 'padrao';
+  return (
+    <SelectPrimitive.Root value={valor} onValueChange={onChange} open={aberto} onOpenChange={setAberto} disabled={desabilitado}>
+      <SelectPrimitive.Trigger
+        aria-label={rotulo}
+        aria-invalid={invalido}
+        className="flex items-center justify-between"
+        onPointerEnter={() => setHover(true)}
+        onPointerLeave={() => setHover(false)}
+        style={{
+          width: largura,
+          height: padrao ? '1.75rem' : '1.5rem',
+          gap: '0.25rem',
+          padding: padrao ? '0 0.4375rem' : '0 0.3125rem 0 0.4375rem',
+          borderRadius: '0.25rem',
+          border: `1px solid ${invalido ? T.danger : destacado ? T.azul : T.border}`,
+          backgroundColor: aberto ? T.hover : T.panel,
+          color: valor ? T.hi : T.lo,
+          fontSize: padrao ? '0.75rem' : '0.6875rem',
+          fontWeight: 500,
+          fontFamily: T.font,
+          fontVariantNumeric: numerico ? 'tabular-nums' : undefined,
+          cursor: desabilitado ? 'not-allowed' : 'pointer',
+          opacity: desabilitado ? 0.5 : 1,
+          outline: 'none',
+          transition: 'border-color 0.15s, background-color 0.15s',
+        }}
+      >
+        <span style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'left' }}>
+          <SelectPrimitive.Value placeholder={placeholder} />
+        </span>
+        <SelectPrimitive.Icon style={{ display: 'flex', flexShrink: 0 }}>
+          <ChevronDown size="0.75rem" color={T.md} style={{ transform: aberto ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }} />
+        </SelectPrimitive.Icon>
+      </SelectPrimitive.Trigger>
+      <SelectPrimitive.Portal>
+        <SelectPrimitive.Content
+          position="popper"
+          sideOffset={4}
+          collisionPadding={12}
+          className="animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-1 data-[side=top]:slide-in-from-bottom-1"
+          style={{
+            // Acima do painel lateral em modo sobreposto (`PainelLateralShell`, zIndex 200) e das
+            // modais — mesmo valor do `FiltroSelect`.
+            zIndex: 400,
+            minWidth: 'var(--radix-select-trigger-width)',
+            maxHeight: 'min(13.5rem, var(--radix-select-content-available-height))',
+            backgroundColor: T.panel,
+            border: `1px solid ${T.border}`,
+            borderRadius: T.radius,
+            boxShadow: 'var(--vli-shadow), 0 0.5rem 1.5rem rgba(0,0,0,0.25)',
+            fontFamily: T.font,
+            overflow: 'hidden',
+          }}
+        >
+          <SelectPrimitive.Viewport className="vli-dropdown-viewport" style={{ padding: '0.25rem' }}>
+            {opcoes.map((o) => (
+              <SelectPrimitive.Item
+                key={o.valor}
+                value={o.valor}
+                className="vli-dropdown-item flex items-center justify-between"
+                style={{
+                  gap: '0.625rem',
+                  padding: '0.375rem 0.5rem',
+                  borderRadius: '0.25rem',
+                  fontSize: padrao ? '0.75rem' : '0.6875rem',
+                  color: T.hi,
+                  fontVariantNumeric: numerico ? 'tabular-nums' : undefined,
+                  cursor: 'pointer',
+                  outline: 'none',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <SelectPrimitive.ItemText>{o.rotulo}</SelectPrimitive.ItemText>
+                <SelectPrimitive.ItemIndicator style={{ display: 'flex', flexShrink: 0 }}>
+                  <Check size="0.75rem" color={T.azulTexto} strokeWidth={2.5} />
+                </SelectPrimitive.ItemIndicator>
+              </SelectPrimitive.Item>
+            ))}
+          </SelectPrimitive.Viewport>
+        </SelectPrimitive.Content>
+      </SelectPrimitive.Portal>
+    </SelectPrimitive.Root>
   );
 }

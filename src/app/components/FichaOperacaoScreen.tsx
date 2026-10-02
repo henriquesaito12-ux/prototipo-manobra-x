@@ -28,7 +28,7 @@ import {
 } from '../data/fichaModelo';
 import { registrarDadosFicha, useDadosFicha } from '../data/fonteDadosFicha';
 import { correcoesVazias, type CorrecoesLeitura } from '../data/correcoesLeitura';
-import { montarPatio } from '../data/patioFicha';
+import { considerados, montarPatio } from '../data/patioFicha';
 import { traduzirRestricao } from '../data/glossarioFicha';
 import { NOMES_PATIOS } from '../data/patio';
 import { ConfirmarFichaModal } from './ConfirmarFichaModal';
@@ -282,8 +282,12 @@ function DetalheFicha({ ficha, validada, onAtualizarAcoes, onAtualizarCorrecoes,
   const [filtroPatio, setFiltroPatio] = useState<FiltroPatio>(FILTRO_PATIO_PADRAO);
   const estado = useDadosFicha(ficha);
   const dados = estado.estado === 'pronto' ? estado.dados : null;
-  // Pátio = fonte + correções do operador (overrides); a composição do trem não tem correção.
+  // Pátio = fonte + correções do operador (Linha/Posição, inclusões e desconsiderações); a
+  // composição do trem não tem correção. A lista inclui os desconsiderados (a tabela os mostra);
+  // contagens usam `considerados`.
   const veiculosPatio = useMemo(() => (dados ? montarPatio(dados, ficha.correcoes) : []), [dados, ficha.correcoes]);
+  // Mesma montagem pra outras correções — a edição do Pátio mostra o rascunho já reposicionado.
+  const montarPatioFicha = useCallback((c: CorrecoesLeitura) => (dados ? montarPatio(dados, c) : []), [dados]);
 
   useEffect(() => {
     setBusca('');
@@ -314,7 +318,7 @@ function DetalheFicha({ ficha, validada, onAtualizarAcoes, onAtualizarCorrecoes,
   const pendencias = dados && temErros(validarAcoes(ficha.acoes, dados.composicao));
   const abas: DefAba[] = [
     { id: 'trem', label: 'Trem', contagem: dados?.composicao.length },
-    { id: 'patio', label: 'Pátio', contagem: dados ? veiculosPatio.length : undefined },
+    { id: 'patio', label: 'Pátio', contagem: dados ? considerados(veiculosPatio).length : undefined },
   ];
 
   let conteudo: React.ReactNode;
@@ -342,6 +346,7 @@ function DetalheFicha({ ficha, validada, onAtualizarAcoes, onAtualizarCorrecoes,
     conteudo = (
       <PatioAba
         veiculos={veiculosPatio}
+        montar={montarPatioFicha}
         correcoes={ficha.correcoes}
         onCorrecoesChange={onAtualizarCorrecoes}
         busca={busca}

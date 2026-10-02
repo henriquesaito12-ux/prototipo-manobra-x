@@ -74,6 +74,10 @@ export function traduzirAtividade(codigo: string): { rotulo: string; tom: TomAti
   return achado ?? { rotulo: codigo.trim() ? capitalizar(codigo) : 'Sem atividade', tom: 'neutro' };
 }
 
+/** Situações oferecidas ao incluir um vagão manualmente — mesma grafia que a Situação Vagões traz
+ *  (ex.: "Ag Tração"), pra o vagão incluído cair nas mesmas categorias e filtros dos da fonte. */
+export const SITUACOES_VAGAO = ['Ag Tração', 'Avariado', 'Não Operacional', 'Ag Manutenção', 'Ag Carga', 'Ag Descarga', 'Liberado'];
+
 /** Motivos sugeridos na retirada — texto livre continua permitido ("Outro"). */
 export const MOTIVOS_RETIRADA = ['Avariado', 'Ag Tração', 'Não operacional', 'Restrição de carga', 'Manutenção', 'Pendência de inspeção'];
 

@@ -22,7 +22,7 @@ import {
   type RetiradaVagao,
   type VeiculoComposicao,
 } from '../../data/fichaModelo';
-import { BotaoFicha, IdVeiculo, PainelLateralShell, T } from './fichaUi';
+import { BotaoFicha, DropdownCelula, IdVeiculo, PainelLateralShell, T } from './fichaUi';
 
 export type ModoAberturaAcoes = 'topo' | 'retirar' | 'incluir';
 /** `nonce` incrementa a cada abertura — reabrir no MESMO modo (ex.: clicar "Retirar vagões" duas
@@ -346,14 +346,17 @@ function SecaoInclusoes({ acoes, onAcoesChange, blocos, editavel, adicionarRef }
           return (
             <div key={inc.id} style={{ borderTop: `1px solid ${T.divisor}` }}>
               <div className="flex items-center" style={linhaEstilo}>
-                <select
-                  value={inc.bloco}
-                  onChange={(e) => patch(inc.id, { bloco: e.target.value })}
-                  aria-label="Bloco"
-                  style={{ ...campoEstilo, width: '6.5rem', flexShrink: 0 }}
-                >
-                  {opcoesBloco(inc.bloco).map((b) => <option key={b} value={b}>{b}</option>)}
-                </select>
+                {/* Mesmo dropdown da edição do Pátio (`DropdownCelula`), no tamanho de formulário. */}
+                <span style={{ flexShrink: 0 }}>
+                  <DropdownCelula
+                    tamanho="padrao"
+                    rotulo="Bloco"
+                    valor={inc.bloco}
+                    onChange={(b) => patch(inc.id, { bloco: b })}
+                    opcoes={opcoesBloco(inc.bloco).map((b) => ({ valor: b, rotulo: b }))}
+                    largura="6.5rem"
+                  />
+                </span>
                 <input
                   type="number"
                   min={1}
@@ -363,7 +366,9 @@ function SecaoInclusoes({ acoes, onAcoesChange, blocos, editavel, adicionarRef }
                   onBlur={() => finalizarQuantidade(inc.id)}
                   aria-label="Quantidade de vagões"
                   aria-invalid={!!erro}
-                  style={{ ...campoEstilo, width: '3.5rem', flexShrink: 0, textAlign: 'center', borderColor: erro ? T.danger : T.border }}
+                  // Borda pelo `.vli-campo-celula` (neutra; azul no hover/foco; vermelha com erro).
+                  className="vli-campo-celula"
+                  style={{ ...campoEstilo, border: undefined, width: '3.5rem', flexShrink: 0, textAlign: 'center' }}
                 />
                 <span style={{ flex: 1, fontSize: '0.75rem', color: T.lo, fontFamily: T.font }}>{inc.quantidade === 1 ? 'vagão' : 'vagões'}</span>
                 <BotaoRemover onClick={() => remover(inc.id)} rotulo="Remover inclusão" />

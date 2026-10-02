@@ -335,6 +335,12 @@
   --vli-linha-retirar-bg: color-mix(in srgb, #DC2626 8%, var(--vli-panel-bg));
   --vli-linha-retirar-bg-hover: color-mix(in srgb, #DC2626 12%, var(--vli-panel-bg));
 
+  /* Linha de veículo ADICIONADO MANUALMENTE na aba Pátio (`.vli-linha-patio.vli-linha-manual`) —
+     leve tint do azul de marca #0E74BA sobre o painel, mesma lógica (e mesmo valor nos dois
+     temas) de --vli-linha-retirar-bg acima. */
+  --vli-linha-manual-bg: color-mix(in srgb, #0E74BA 7%, var(--vli-panel-bg));
+  --vli-linha-manual-bg-hover: color-mix(in srgb, #0E74BA 12%, var(--vli-panel-bg));
+
   /* Fundo dos chips "vagão a retirar"/"vagão a incluir" (`TagVagao`, `PlanManobraX.tsx`) — 2026-08-27,
      pedido explícito do usuário, com hex exatos (não `-danger-bg`/`-success-bg` genéricos: são
      tons próprios, dedicados a esse chip específico, não o véu de aviso reaproveitável em
@@ -905,4 +911,72 @@
 .vli-tooltip-desabilitado > * {
   flex: 1;
   min-width: 0;
+}
+
+/* Linhas das tabelas da aba Pátio — mesmo padrão de `.vli-linha-composicao`: fundo sólido por
+   CSS em TODA célula (`> td`), sticky (Linha/Posição/Veículo/Ações) ou não, pra hover e destaque
+   saírem num tom só na linha inteira. Veículo adicionado manualmente ganha um tint azul leve. */
+.vli-linha-patio > td {
+  background-color: var(--vli-panel-bg);
+}
+
+.vli-linha-patio:hover > td {
+  background-color: var(--vli-hover-tint);
+}
+
+.vli-linha-patio.vli-linha-manual > td {
+  background-color: var(--vli-linha-manual-bg);
+}
+
+.vli-linha-patio.vli-linha-manual:hover > td {
+  background-color: var(--vli-linha-manual-bg-hover);
+}
+
+/* Faixa azul na borda esquerda da linha manual (primeira célula, sticky) — destaque que não
+   depende só da cor de fundo. */
+.vli-linha-patio.vli-linha-manual > td:first-child {
+  box-shadow: inset 3px 0 0 var(--vli-marca-azul);
+}
+
+/* Linha recém-movida na edição do Pátio (mudou de lugar na tabela) — pisca o azul de marca e
+   volta ao fundo normal, pra o olho achar onde ela foi parar. */
+@keyframes vli-linha-movida {
+  from { background-color: color-mix(in srgb, #0E74BA 22%, var(--vli-panel-bg)); }
+}
+
+.vli-linha-patio.vli-linha-movida > td {
+  animation: vli-linha-movida 1.2s ease-out;
+}
+
+/* Item do dropdown compacto de célula (`DropdownCelula`, `fichaUi.tsx`) — destaque por
+   `data-highlighted` do Radix, que cobre mouse E teclado (setas), no mesmo tom de hover dos
+   dropdowns do header. */
+.vli-dropdown-item[data-highlighted] {
+  background-color: var(--vli-hover-tint);
+}
+
+.vli-dropdown-item[data-state='checked'] {
+  font-weight: 700;
+}
+
+/* Campo de texto de célula (linha de inclusão do Pátio) — mesmo desenho do trigger do
+   `DropdownCelula`: borda neutra, azul de marca só no hover/foco, vermelha com erro. */
+.vli-campo-celula {
+  border: 1px solid var(--vli-border);
+  transition: border-color 0.15s;
+}
+
+.vli-campo-celula::placeholder {
+  text-transform: none;
+  color: var(--vli-text-lo);
+  font-weight: 400;
+}
+
+.vli-campo-celula:hover,
+.vli-campo-celula:focus {
+  border-color: var(--vli-marca-azul);
+}
+
+.vli-campo-celula[aria-invalid='true'] {
+  border-color: var(--vli-danger-text);
 }
